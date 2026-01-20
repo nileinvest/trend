@@ -14,13 +14,13 @@
         tr:hover { background-color: #2a2e39; }
         .buy { color: #00ff00; font-weight: bold; }
         .sell { color: #ff4444; font-weight: bold; }
-        .status-dot { font-size: 10px; }
+        .status-dot { font-size: 10px; color: #4caf50; }
     </style>
 </head>
 <body>
     <div class="chart-section" id="tv_chart"></div>
     <div class="signals-section">
-        <h2>Dashboard Live <span id="status" class="status-dot">● Sincronizzazione...</span></h2>
+        <h2>Dashboard Live <span id="status" class="status-dot">● Sincronizzato</span></h2>
         <table>
             <thead>
                 <tr>
@@ -30,6 +30,7 @@
                     <th>D (I)</th>
                     <th>G W (G)</th>
                     <th>G D (K)</th>
+                    <th>Var% W</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -38,7 +39,6 @@
 
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    // URL del tuo foglio pubblicato
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
 
     function initChart(symbol = "BINANCE:BTCUSDT") {
@@ -48,40 +48,35 @@
         });
     }
 
-    // Funzione per pulire i numeri con la virgola italiana
-    function parseItalianFloat(value) {
-        if (!value) return 0;
-        let cleanValue = value.toString().replace(/\./g, '').replace(',', '.').trim();
-        return parseFloat(cleanValue) || 0;
-    }
-
     async function updateDashboard() {
         try {
-            const response = await fetch(csvUrl + '&t=' + Date.now());
+            // Aggiungiamo un timestamp per evitare la cache del browser
+            const response = await fetch(csvUrl + '&cache=' + new Date().getTime());
             const data = await response.text();
             
-            // Gestione intelligente del separatore (virgola o punto e virgola)
-            const rows = data.split(/\r?\n/).map(row => {
-                // Se la riga contiene punto e virgola, usa quello, altrimenti usa la virgola
-                const sep = row.includes(';') ? ';' : ',';
-                return row.split(sep);
-            });
-
+            // Dividiamo le righe
+            const rows = data.split(/\r?\n/);
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            // Saltiamo l'intestazione (i=1)
             for (let i = 1; i < rows.length; i++) {
-                const col = rows[i];
-                if (!col[0] || col[0].length < 2) continue;
+                if (!rows[i]) continue;
+                
+                // Riconoscimento automatico del separatore (comma o punto e virgola)
+                const sep = rows[i].includes(';') ? ';' : ',';
+                const col = rows[i].split(sep);
 
-                // Mappatura esatta basata sulla tua immagine del foglio
+                if (!col[0]) continue;
+
+                // Mappatura Rigorosa:
+                // A=0(Ticker), C=2(Prezzo), E=4(Stato W), G=6(Giorni W), I=8(Stato D), K=10(Giorni D)
                 const ticker = col[0].trim();
-                const prezzo = col[2]; // Colonna C
-                const segnaleW = (col[4] || '').toUpperCase(); // Colonna E
-                const segnaleD = (col[8] || '').toUpperCase(); // Colonna I
-                const giorniW = col[6] || '0'; // Colonna G
-                const giorniD = col[10] || '0'; // Colonna K
+                const prezzo = col[2] || "0";
+                const segnaleW = (col[4] || "").trim().toUpperCase();
+                const giorniW = col[6] || "0";
+                const segnaleD = (col[8] || "").trim().toUpperCase();
+                const giorniD = col[10] || "0";
+                const variazione = col[11] || "0%"; // Colonna successiva per la Var%
 
                 const tr = document.createElement('tr');
                 tr.onclick = () => initChart(ticker.includes(':') ? ticker : "BINANCE:" + ticker);
@@ -89,23 +84,26 @@
                 tr.innerHTML = `
                     <td><b>${ticker}</b></td>
                     <td>${prezzo}</td>
-                    <td class="${signaleW.includes('BUY') ? 'buy' : 'sell'}">${signaleW}</td>
-                    <td class="${signaleD.includes('BUY') ? 'buy' : 'sell'}">${signaleD}</td>
+                    <td class="${segnaleW.includes('BUY') ? 'buy' : 'sell'}">${segnaleW}</td>
+                    <td class="${segnaleD.includes('BUY') ? 'buy' : 'sell'}">${segnaleD}</td>
                     <td>${giorniW}</td>
                     <td>${giorniD}</td>
+                    <td style="color: ${variazione.includes('-') ? '#ff4444' : '#00ff00'}">${variazione}</td>
                 `;
                 tbody.appendChild(tr);
             }
-            document.getElementById('status').style.color = "#4caf50";
             document.getElementById('status').innerText = "● Sincronizzato";
+            document.getElementById('status').style.color = "#4caf50";
         } catch (e) {
-            document.getElementById('status').innerText = "● Errore Connessione";
+            console.error(e);
+            document.getElementById('status').innerText = "● Errore di connessione";
+            document.getElementById('status').style.color = "#ff4444";
         }
     }
 
     initChart();
     updateDashboard();
-    setInterval(updateDashboard, 30000); // Aggiorna ogni 30 secondi
+    setInterval(updateDashboard, 30000);
 </script>
 </body>
 </html>
