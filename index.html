@@ -4,106 +4,230 @@
     <meta charset="UTF-8">
     <title>Moneyline Dashboard Pro</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #131722; font-family: sans-serif; color: white; display: flex; height: 100vh; overflow: hidden; }
-        .chart-section { flex: 1.5; border-right: 1px solid #333; }
-        .signals-section { flex: 1.2; padding: 15px; background-color: #1e222d; overflow-y: auto; }
-        h2 { color: #d1d4dc; font-size: 1.1rem; margin: 0 0 15px 0; display: flex; justify-content: space-between; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { text-align: left; color: #888; border-bottom: 1px solid #444; padding: 8px; position: sticky; top: 0; background: #1e222d; }
-        td { padding: 8px; border-bottom: 1px solid #2a2e39; cursor: pointer; }
-        tr:hover { background-color: #2a2e39; }
-        .buy { color: #00ff00; font-weight: bold; }
-        .sell { color: #ff4444; font-weight: bold; }
-        .status-dot { font-size: 10px; color: #4caf50; }
+        body { margin: 0; padding: 0; background-color: #131722; font-family: 'Segoe UI', sans-serif; color: #e0e0e0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Layout */
+        .chart-section { flex: 1.5; border-right: 1px solid #2a2e39; }
+        .data-section { flex: 1.2; display: flex; flex-direction: column; background-color: #1e222d; }
+        
+        /* Header e Controlli */
+        .header-panel { padding: 15px; border-bottom: 1px solid #2a2e39; background: #1e222d; }
+        h2 { margin: 0 0 10px 0; font-size: 16px; color: #d1d4dc; display: flex; justify-content: space-between; align-items: center; }
+        .status-ok { color: #00ff00; font-size: 11px; }
+        .status-err { color: #ff4444; font-size: 11px; }
+
+        /* Tabella */
+        .table-container { flex: 1; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
+        
+        /* Intestazioni (Click per ordinare) */
+        th { 
+            position: sticky; top: 0; background: #2a2e39; color: #b2b5be; 
+            padding: 8px 4px; text-align: left; font-weight: 600; cursor: pointer; user-select: none;
+            border-bottom: 2px solid #363a45; white-space: nowrap;
+        }
+        th:hover { background: #363a45; color: white; }
+        th::after { content: ' ⇅'; font-size: 10px; opacity: 0.5; }
+
+        /* Celle */
+        td { padding: 8px 4px; border-bottom: 1px solid #2a2e39; color: #d1d4dc; }
+        tr:hover { background-color: #2a2e39; cursor: pointer; }
+
+        /* Input Filtri */
+        .filter-row th { background: #1e222d; padding: 2px; border-bottom: 1px solid #444; }
+        .filter-input { 
+            width: 90%; background: #131722; border: 1px solid #444; color: #fff; 
+            font-size: 11px; padding: 4px; border-radius: 3px; 
+        }
+        .filter-input:focus { border-color: #2962ff; outline: none; }
+
+        /* Stili Dati */
+        .buy { color: #4caf50; font-weight: bold; background: rgba(76, 175, 80, 0.1); padding: 2px 4px; border-radius: 3px; }
+        .sell { color: #ff5252; font-weight: bold; background: rgba(255, 82, 82, 0.1); padding: 2px 4px; border-radius: 3px; }
+        .pos { color: #4caf50; }
+        .neg { color: #ff5252; }
+        .ticker-name { font-weight: bold; color: #fff; }
     </style>
 </head>
 <body>
+
     <div class="chart-section" id="tv_chart"></div>
-    <div class="signals-section">
-        <h2>Dashboard Live <span id="status" class="status-dot">● Sincronizzato</span></h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Prezzo</th>
-                    <th>W (E)</th>
-                    <th>D (I)</th>
-                    <th>G W (G)</th>
-                    <th>G D (K)</th>
-                    <th>Var% W</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+
+    <div class="data-section">
+        <div class="header-panel">
+            <h2>Moneyline Live <span id="status" class="status-err">● Connessione...</span></h2>
+        </div>
+        
+        <div class="table-container">
+            <table id="mainTable">
+                <thead>
+                    <tr id="headerRow">
+                        <th onclick="sortTable(0)">Ticker</th>
+                        <th onclick="sortTable(1)">Prezzo</th>
+                        <th onclick="sortTable(2)">Signal W</th>
+                        <th onclick="sortTable(3)">Signal D</th>
+                        <th onclick="sortTable(4)">G W</th>
+                        <th onclick="sortTable(5)">G D</th>
+                        <th onclick="sortTable(6)">Var% W</th>
+                    </tr>
+                    <tr class="filter-row">
+                        <th><input type="text" class="filter-input" placeholder="Cerca..." onkeyup="filterTable(0)"></th>
+                        <th><input type="text" class="filter-input" placeholder="> 0..." onkeyup="filterTable(1)"></th>
+                        <th><input type="text" class="filter-input" placeholder="Buy/Sell" onkeyup="filterTable(2)"></th>
+                        <th><input type="text" class="filter-input" placeholder="Buy/Sell" onkeyup="filterTable(3)"></th>
+                        <th><input type="text" class="filter-input" placeholder="..." onkeyup="filterTable(4)"></th>
+                        <th><input type="text" class="filter-input" placeholder="..." onkeyup="filterTable(5)"></th>
+                        <th><input type="text" class="filter-input" placeholder="%" onkeyup="filterTable(6)"></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
     </div>
 
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
+    let globalData = []; // Mantiene i dati in memoria per ordinamento veloce
 
+    // 1. Inizializza Grafico
     function initChart(symbol = "BINANCE:BTCUSDT") {
-        document.getElementById('tv_chart').innerHTML = '';
         new TradingView.widget({
-            "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "1", "locale": "it", "container_id": "tv_chart"
+            "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "1", "locale": "it", "enable_publishing": false, "hide_side_toolbar": false, "container_id": "tv_chart"
         });
     }
 
-    async function updateDashboard() {
+    // 2. Pulizia Numeri Italiani (1.200,50 -> 1200.50)
+    function parseItNum(str) {
+        if (!str) return -999999;
+        // Rimuove % e spazi, converte virgola in punto
+        let clean = str.toString().replace('%', '').replace(/\./g, '').replace(',', '.').trim();
+        let num = parseFloat(clean);
+        return isNaN(num) ? -999999 : num;
+    }
+
+    // 3. Scarica e Elabora Dati
+    async function updateData() {
         try {
-            // Aggiungiamo un timestamp per evitare la cache del browser
-            const response = await fetch(csvUrl + '&cache=' + new Date().getTime());
-            const data = await response.text();
+            const res = await fetch(csvUrl + '&nocache=' + Date.now());
+            const text = await res.text();
             
-            // Dividiamo le righe
-            const rows = data.split(/\r?\n/);
+            // Rileva separatore (; o ,)
+            const sep = text.includes(';') ? ';' : ',';
+            const rows = text.split(/\r?\n/).map(r => r.split(sep));
+
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
+            globalData = [];
+
+            // Mapping: 0=Ticker, 2=Prezzo, 4=SigW, 8=SigD, 6=GW, 10=GD, 11=Var%
+            // NOTA: Basato sulla tua struttura. Se Var% è l'ultima colonna calcolata o presente nel CSV.
+            // Qui assumo che Var% sia nella colonna 11 (L) o 12 (M). Adatto dinamicamente.
 
             for (let i = 1; i < rows.length; i++) {
-                if (!rows[i]) continue;
-                
-                // Riconoscimento automatico del separatore (comma o punto e virgola)
-                const sep = rows[i].includes(';') ? ';' : ',';
-                const col = rows[i].split(sep);
+                let c = rows[i];
+                if (!c[0] || c[0].length < 2) continue;
 
-                if (!col[0]) continue;
+                // Estrai dati grezzi
+                let ticker = c[0].trim();
+                let prezzo = c[2] || "0";
+                let sigW = (c[4] || "-").toUpperCase();
+                let sigD = (c[8] || "-").toUpperCase();
+                let gw = c[6] || "0";
+                let gd = c[10] || "0";
+                let varP = c[11] || "0,00%"; // Colonna L o calcolata
 
-                // Mappatura Rigorosa:
-                // A=0(Ticker), C=2(Prezzo), E=4(Stato W), G=6(Giorni W), I=8(Stato D), K=10(Giorni D)
-                const ticker = col[0].trim();
-                const prezzo = col[2] || "0";
-                const segnaleW = (col[4] || "").trim().toUpperCase();
-                const giorniW = col[6] || "0";
-                const segnaleD = (col[8] || "").trim().toUpperCase();
-                const giorniD = col[10] || "0";
-                const variazione = col[11] || "0%"; // Colonna successiva per la Var%
-
-                const tr = document.createElement('tr');
-                tr.onclick = () => initChart(ticker.includes(':') ? ticker : "BINANCE:" + ticker);
-                
-                tr.innerHTML = `
-                    <td><b>${ticker}</b></td>
+                // Crea oggetto riga
+                let rowHtml = `
+                    <td class="ticker-name">${ticker}</td>
                     <td>${prezzo}</td>
-                    <td class="${segnaleW.includes('BUY') ? 'buy' : 'sell'}">${segnaleW}</td>
-                    <td class="${segnaleD.includes('BUY') ? 'buy' : 'sell'}">${segnaleD}</td>
-                    <td>${giorniW}</td>
-                    <td>${giorniD}</td>
-                    <td style="color: ${variazione.includes('-') ? '#ff4444' : '#00ff00'}">${variazione}</td>
+                    <td><span class="${sigW.includes('BUY')?'buy':sigW.includes('SELL')?'sell':''}">${sigW}</span></td>
+                    <td><span class="${sigD.includes('BUY')?'buy':sigD.includes('SELL')?'sell':''}">${sigD}</span></td>
+                    <td>${gw}</td>
+                    <td>${gd}</td>
+                    <td class="${varP.includes('-')?'neg':'pos'}">${varP}</td>
                 `;
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = rowHtml;
+                tr.onclick = () => initChart(ticker.includes(':') ? ticker : "BINANCE:" + ticker);
                 tbody.appendChild(tr);
             }
-            document.getElementById('status').innerText = "● Sincronizzato";
-            document.getElementById('status').style.color = "#4caf50";
+
+            document.getElementById('status').innerText = "● LIVE";
+            document.getElementById('status').className = "status-ok";
+
         } catch (e) {
             console.error(e);
-            document.getElementById('status').innerText = "● Errore di connessione";
-            document.getElementById('status').style.color = "#ff4444";
+            document.getElementById('status').innerText = "● ERRORE";
+            document.getElementById('status').className = "status-err";
         }
     }
 
+    // 4. Funzione Filtro (stile Excel)
+    window.filterTable = function(colIndex) {
+        let input = document.getElementsByClassName("filter-input")[colIndex];
+        let filter = input.value.toUpperCase();
+        let table = document.getElementById("mainTable");
+        let tr = table.getElementsByTagName("tr");
+
+        // Salta le prime 2 righe (Intestazioni e Filtri)
+        for (let i = 2; i < tr.length; i++) {
+            let td = tr[i].getElementsByTagName("td")[colIndex];
+            if (td) {
+                let txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    // 5. Funzione Ordinamento (Click header)
+    let sortDir = [true, true, true, true, true, true, true]; // true = Ascendente
+    window.sortTable = function(n) {
+        let table = document.getElementById("mainTable");
+        let rows, switching, i, x, y, shouldSwitch;
+        switching = true;
+        
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            // Loop da riga 2 (dopo header e filtri)
+            for (i = 2; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                let xVal = x.innerText.toLowerCase();
+                let yVal = y.innerText.toLowerCase();
+                
+                // Se è colonna numerica (Prezzo, Giorni, Var%) converti
+                if(n === 1 || n === 4 || n === 5 || n === 6) {
+                    xVal = parseItNum(xVal);
+                    yVal = parseItNum(yVal);
+                }
+
+                if (sortDir[n]) {
+                    if (xVal < yVal) { shouldSwitch = true; break; }
+                } else {
+                    if (xVal > yVal) { shouldSwitch = true; break; }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+        sortDir[n] = !sortDir[n]; // Inverti direzione prossimo click
+    }
+
+    // Avvio
     initChart();
-    updateDashboard();
-    setInterval(updateDashboard, 30000);
+    updateData();
+    setInterval(updateData, 30000); // Refresh 30 sec
 </script>
 </body>
 </html>
