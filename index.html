@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Moneyline Dashboard - Fix Colonne</title>
+    <title>Moneyline Dashboard - Live</title>
     <style>
         body { margin: 0; padding: 20px; background-color: #131722; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0e0; }
         .data-section { max-width: 1300px; margin: 0 auto; background-color: #1e222d; border-radius: 12px; border: 1px solid #2a2e39; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
@@ -22,7 +22,8 @@
         .buy-pill { color: #00ff00; font-weight: bold; background: rgba(0, 255, 0, 0.1); padding: 4px 8px; border-radius: 4px; }
         .sell-pill { color: #ff4444; font-weight: bold; background: rgba(255, 68, 68, 0.1); padding: 4px 8px; border-radius: 4px; }
         .ticker-style { font-weight: bold; color: #2962ff; font-size: 15px; }
-        .empty-cell { color: #5d606b; text-align: center; }
+        .pos-var { color: #00ff00; font-weight: 500; }
+        .neg-var { color: #ff4444; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -65,7 +66,6 @@
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
 
-    // Funzione avanzata per dividere le righe CSV gestendo le virgolette
     function parseCSVLine(line, sep) {
         const result = [];
         let cur = '';
@@ -91,19 +91,21 @@
             tbody.innerHTML = '';
 
             lines.forEach((line, index) => {
-                if (index === 0 || !line) return; // Salta intestazione e righe vuote
+                if (index === 0 || !line) return;
 
                 const c = parseCSVLine(line, sep);
 
-                // Mappatura Rigorosa
-                // A=0 (Ticker), E=4 (TrendW), G=6 (DayW), I=8 (TrendD), K=10 (DayD)
                 const ticker = c[0] || "";
-                if (ticker.length < 2) return; // Salta righe sporche
+                if (ticker.length < 2) return;
 
-                const trendW = c[4] || "";
-                const dayW   = c[6] || "";
-                const trendD = c[8] || "";
-                const dayD   = c[10] || "";
+                // MAPPATURA NUOVE COLONNE
+                const lastPrice = c[14] || "-"; // Colonna O
+                const trendW    = c[4]  || "";
+                const dayW      = c[6]  || "";
+                const varW      = c[15] || "-"; // Colonna P
+                const trendD    = c[8]  || "";
+                const dayD      = c[10] || "";
+                const varD      = c[16] || "-"; // Colonna Q
 
                 const tr = document.createElement('tr');
                 
@@ -114,22 +116,30 @@
                     return val;
                 };
 
+                // Formattazione colore Variazioni %
+                const formatVar = (val) => {
+                    if (val === "-") return val;
+                    const num = parseFloat(val.replace(',', '.').replace('%', ''));
+                    if (num > 0) return `<span class="pos-var">${val}</span>`;
+                    if (num < 0) return `<span class="neg-var">${val}</span>`;
+                    return val;
+                };
+
                 tr.innerHTML = `
                     <td class="ticker-style">${ticker}</td>
-                    <td class="empty-cell">-</td>
+                    <td style="font-weight: bold; color: #fff;">${lastPrice}</td>
                     <td>${formatSign(trendW)}</td>
                     <td>${dayW}</td>
-                    <td class="empty-cell">-</td>
+                    <td>${formatVar(varW)}</td>
                     <td>${formatSign(trendD)}</td>
                     <td>${dayD}</td>
-                    <td class="empty-cell">-</td>
+                    <td>${formatVar(varD)}</td>
                 `;
                 tbody.appendChild(tr);
             });
         } catch (e) { console.error("Errore Caricamento:", e); }
     }
 
-    // Filtri
     window.filterTable = function(n) {
         let input = document.getElementsByClassName("filter-input")[n];
         let filter = input.value.toUpperCase();
@@ -140,7 +150,6 @@
         }
     }
 
-    // Ordinamento
     let sortOrder = {};
     window.sortTable = function(n) {
         let tbody = document.getElementById("tableBody");
