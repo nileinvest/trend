@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Moneyline Dashboard - Live</title>
+    <title>Dashboard - Live</title>
     <style>
         body { margin: 0; padding: 20px; background-color: #131722; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0e0; }
         .data-section { max-width: 1300px; margin: 0 auto; background-color: #1e222d; border-radius: 12px; border: 1px solid #2a2e39; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
@@ -30,7 +30,7 @@
 
     <div class="data-section">
         <div class="header-panel">
-            <h2>Dashboard Moneyline</h2>
+            <h2>Dashboard</h2>
             <div id="status" style="color: #4caf50; font-weight: bold;">● CONNESSIONE ATTIVA</div>
         </div>
         
@@ -100,10 +100,10 @@
                 // --- MAPPATURA AGGIORNATA ---
                 const lastPrice = c[14] || "-"; // Colonna O
                 const trendW    = c[4]  || "";  // Colonna E
-                const dayW      = c[6]  || "";  // Colonna G
+                const timesinceflipW      = c[6]  || "";  // Colonna G
                 const varW      = c[15] || "-"; // Colonna P
                 const trendD    = c[9]  || "";  // Colonna J (MODIFICATA)
-                const dayD      = c[11] || "";  // Colonna L (MODIFICATA)
+                const TimesinceflipD      = c[11] || "";  // Colonna L (MODIFICATA)
                 const varD      = c[16] || "-"; // Colonna Q
 
                 const tr = document.createElement('tr');
@@ -166,3 +166,4 @@
 </script>
 </body>
 </html>
+
