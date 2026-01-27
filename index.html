@@ -2,187 +2,208 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Moneyline Dashboard - Live</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moneyline Dashboard Live</title>
     <style>
-        body { margin: 0; padding: 20px; background-color: #131722; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0e0; }
-        .data-section { max-width: 1400px; margin: 0 auto; background-color: #1e222d; border-radius: 12px; border: 1px solid #2a2e39; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
-        .header-panel { padding: 20px; border-bottom: 1px solid #2a2e39; background: #1e222d; display: flex; justify-content: space-between; align-items: center; }
-        h2 { margin: 0; font-size: 20px; color: #d1d4dc; letter-spacing: 1px; }
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
-        th { position: sticky; top: 0; background: #2a2e39; color: #b2b5be; padding: 15px 12px; cursor: pointer; border-bottom: 2px solid #363a45; font-weight: 600; text-transform: uppercase; font-size: 11px; }
-        td { padding: 12px 12px; border-bottom: 1px solid #2a2e39; white-space: nowrap; }
-        tr:hover { background-color: #262b3a; }
+        body { margin: 0; padding: 20px; background-color: #131722; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #e0e0e0; }
+        .container { max-width: 1600px; margin: 0 auto; background: #1e222d; border-radius: 8px; border: 1px solid #2a2e39; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         
-        /* Filtri */
-        .filter-row th { background: #1e222d; padding: 8px 12px; cursor: default; }
-        .filter-input { width: 100%; background: #131722; border: 1px solid #3d4151; color: #fff; font-size: 11px; padding: 6px; border-radius: 4px; box-sizing: border-box; }
+        /* Barra di Ricerca */
+        .controls { padding: 15px; border-bottom: 1px solid #2a2e39; display: flex; gap: 10px; }
+        input[type="text"] {
+            background: #2a2e39; border: 1px solid #363a45; color: white; padding: 10px; border-radius: 4px; width: 300px; outline: none;
+        }
+        input[type="text"]:focus { border-color: #2962ff; }
+
+        /* Tabella */
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #2a2e39; color: #b2b5be; padding: 15px; text-align: left; text-transform: uppercase; font-size: 12px; cursor: pointer; user-select: none; }
+        th:hover { background: #363a45; color: white; }
+        td { padding: 12px 15px; border-bottom: 1px solid #2a2e39; }
+        tr:hover { background: #262b3a; }
+
+        /* Stili Celle */
+        .buy { color: #00ff00; font-weight: bold; background: rgba(0,255,0,0.1); padding: 4px 8px; border-radius: 4px; display: inline-block; text-align: center; min-width: 60px; }
+        .sell { color: #ff4444; font-weight: bold; background: rgba(255,68,68,0.1); padding: 4px 8px; border-radius: 4px; display: inline-block; text-align: center; min-width: 60px; }
+        .neutral { color: #888; }
         
-        /* Segnali Visivi */
-        .buy-pill { color: #00ff00; font-weight: bold; background: rgba(0, 255, 0, 0.1); padding: 4px 8px; border-radius: 4px; }
-        .sell-pill { color: #ff4444; font-weight: bold; background: rgba(255, 68, 68, 0.1); padding: 4px 8px; border-radius: 4px; }
-        .ticker-style { font-weight: bold; color: #2962ff; font-size: 15px; }
-        .pos-var { color: #00ff00; font-weight: 500; }
-        .neg-var { color: #ff4444; font-weight: 500; }
+        .ticker { font-weight: bold; color: #2962ff; font-size: 15px; }
+        .market { color: #b2b5be; font-style: italic; } /* Stile per la nuova colonna Markets */
+        .price { font-family: 'Courier New', monospace; font-weight: bold; color: #fff; font-size: 15px; }
+        
+        /* Loading */
+        #loading { padding: 20px; text-align: center; color: #888; }
     </style>
 </head>
 <body>
 
-    <div class="data-section">
-        <div class="header-panel">
-            <h2>Dashboard Moneyline</h2>
-            <div id="status" style="color: #4caf50; font-weight: bold;">● LIVE DATA ACTIVE</div>
+    <div class="container">
+        <div class="controls">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cerca Ticker o Market...">
+            <div style="padding: 10px; color: #666; font-size: 12px; margin-left: auto;">Aggiornamento live: <span id="lastUpdate">In attesa...</span></div>
         </div>
-        
-        <div class="table-container">
-            <table id="mainTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Ticker</th>
-                        <th onclick="sortTable(1)">LAST PRICE</th>
-                        <th onclick="sortTable(2)">Trend W</th>
-                        <th onclick="sortTable(3)">Price Since Flip W</th>
-                        <th onclick="sortTable(4)">Var % W</th>
-                        <th onclick="sortTable(5)">Trend D</th>
-                        <th onclick="sortTable(6)">Price Since Flip D</th>
-                        <th onclick="sortTable(7)">Var % D</th>
-                    </tr>
-                    <tr class="filter-row">
-                        <th><input type="text" class="filter-input" placeholder="🔍 Ticker" onkeyup="filterTable(0)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(1)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(2)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(3)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(4)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(5)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(6)"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtr..." onkeyup="filterTable(7)"></th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Ticker ⬍</th>
+                    <th onclick="sortTable(1)">Markets ⬍</th> <th onclick="sortTable(2)">Prezzo ⬍</th>
+                    <th onclick="sortTable(3)">Trend W ⬍</th>
+                    <th onclick="sortTable(4)">Giorni W ⬍</th>
+                    <th onclick="sortTable(5)">Trend D ⬍</th>
+                    <th onclick="sortTable(6)">Giorni D ⬍</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+        <div id="loading">Caricamento dati in corso...</div>
     </div>
 
 <script>
+    // URL del CSV pubblicato (Google Sheets)
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
 
-    function parseCSVLine(line, sep) {
-        const result = [];
-        let cur = '';
-        let inQuotes = false;
-        for (let char of line) {
-            if (char === '"') inQuotes = !inQuotes;
-            else if (char === sep && !inQuotes) {
-                result.push(cur.trim());
-                cur = '';
-            } else cur += char;
+    async function loadData() {
+        try {
+            const response = await fetch(csvUrl + '&cache=' + Date.now()); // Evita la cache
+            const data = await response.text();
+            parseCSV(data);
+            document.getElementById('loading').style.display = 'none';
+            
+            const now = new Date();
+            document.getElementById('lastUpdate').innerText = now.toLocaleTimeString();
+        } catch (error) {
+            console.error('Errore caricamento:', error);
+            document.getElementById('loading').innerText = 'Errore caricamento dati.';
         }
-        result.push(cur.trim());
-        return result;
     }
 
-    async function update() {
-        try {
-            const res = await fetch(csvUrl + '&nocache=' + Date.now());
-            const text = await res.text();
-            const sep = text.includes(';') ? ';' : ',';
-            const lines = text.split(/\r?\n/);
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+    function parseCSV(text) {
+        const rows = text.split(/\r?\n/);
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
 
-            lines.forEach((line, index) => {
-                if (index === 0 || !line) return;
+        rows.forEach((row, index) => {
+            if (index === 0 || !row.trim()) return; // Salta intestazione e righe vuote
+            
+            // Gestione separatore CSV (virgola o punto e virgola)
+            const sep = row.includes(';') ? ';' : ',';
+            // Regex complessa per gestire celle con virgole all'interno (es. "1,200.00")
+            const cells = row.split(sep).map(val => val.replace(/^"|"$/g, '').trim());
 
-                const c = parseCSVLine(line, sep);
-                const ticker = c[0] || "";
-                if (ticker.length < 2) return;
+            // MAPPING COLONNE (Indici base 0):
+            // A=0 (Ticker), B=1 (MARKETS), E=4 (Trend W), G=6 (Giorni W), I=8 (Trend D), K=10 (Giorni D), L=11 (Prezzo)
+            
+            const ticker = cells[0];
+            const market = cells[1] || ''; // NUOVA COLONNA B
+            const trendW = cells[4] || '';
+            const daysW = cells[6] || '';
+            const trendD = cells[8] || '';
+            const daysD = cells[10] || '';
+            const price = cells[11] || '---';
 
-                // MAPPATURA AGGIORNATA
-                const lastPrice = c[14] || "-"; // Colonna O
-                const trendW    = c[4]  || "";  // Colonna E
-                const flipW     = c[6]  || "";  // Colonna G (Price Since Flip W)
-                const varW      = c[15] || "-"; // Colonna P
-                const trendD    = c[9]  || "";  // Colonna J
-                const flipD     = c[11] || "";  // Colonna L (Price Since Flip D)
-                const varD      = c[16] || "-"; // Colonna Q
-
+            if (ticker) {
                 const tr = document.createElement('tr');
-                
-                const formatSign = (val) => {
-                    const v = val.toUpperCase();
-                    if (v.includes('BUY')) return `<span class="buy-pill">${val}</span>`;
-                    if (v.includes('SELL')) return `<span class="sell-pill">${val}</span>`;
-                    return val;
-                };
-
-                const formatVar = (val) => {
-                    if (val === "-") return val;
-                    const cleanVal = val.replace(',', '.').replace('%', '').trim();
-                    const num = parseFloat(cleanVal);
-                    if (isNaN(num)) return val;
-                    if (num > 0) return `<span class="pos-var">${val}</span>`;
-                    if (num < 0) return `<span class="neg-var">${val}</span>`;
-                    return val;
-                };
-
                 tr.innerHTML = `
-                    <td class="ticker-style">${ticker}</td>
-                    <td style="font-weight: bold; color: #fff;">${lastPrice}</td>
-                    <td>${formatSign(trendW)}</td>
-                    <td>${flipW}</td>
-                    <td>${formatVar(varW)}</td>
-                    <td>${formatSign(trendD)}</td>
-                    <td>${flipD}</td>
-                    <td>${formatVar(varD)}</td>
+                    <td class="ticker">${ticker}</td>
+                    <td class="market">${market}</td>
+                    <td class="price">${price}</td>
+                    <td>${formatTrend(trendW)}</td>
+                    <td>${daysW}</td>
+                    <td>${formatTrend(trendD)}</td>
+                    <td>${daysD}</td>
                 `;
                 tbody.appendChild(tr);
-            });
-        } catch (e) { console.error("Errore Caricamento:", e); }
+            }
+        });
+        filterTable(); // Riapplica il filtro se c'è testo nella barra
     }
 
-    window.filterTable = function(n) {
-        let inputs = document.getElementsByClassName("filter-input");
-        let table = document.getElementById("tableBody");
-        let rows = table.getElementsByTagName("tr");
+    function formatTrend(val) {
+        if (!val) return '<span class="neutral">-</span>';
+        val = val.toUpperCase();
+        if (val.includes('BUY') || val.includes('LONG')) return `<span class="buy">● BUY</span>`;
+        if (val.includes('SELL') || val.includes('SHORT')) return `<span class="sell">● SELL</span>`;
+        return val;
+    }
 
-        for (let i = 0; i < rows.length; i++) {
-            let showRow = true;
-            for (let j = 0; j < inputs.length; j++) {
-                let filter = inputs[j].value.toUpperCase();
-                let td = rows[i].getElementsByTagName("td")[j];
-                if (td && filter) {
-                    if (!td.innerText.toUpperCase().includes(filter)) {
-                        showRow = false;
-                        break;
+    // --- FUNZIONI DI ORDINAMENTO E FILTRO ---
+
+    function filterTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById('dataTable');
+        const tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) {
+            const tds = tr[i].getElementsByTagName('td');
+            let txtValue = "";
+            // Cerca nel Ticker (0) e nel Market (1)
+            if (tds[0] || tds[1]) {
+                txtValue = (tds[0].textContent || tds[0].innerText) + " " + (tds[1].textContent || tds[1].innerText);
+            }
+            
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("dataTable");
+        switching = true;
+        dir = "asc"; 
+        
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                
+                let xContent = x.innerText.toLowerCase();
+                let yContent = y.innerText.toLowerCase();
+
+                // Gestione numeri per ordinamento corretto
+                let xNum = parseFloat(xContent.replace(/[^0-9.-]+/g,""));
+                let yNum = parseFloat(yContent.replace(/[^0-9.-]+/g,""));
+
+                if (!isNaN(xNum) && !isNaN(yNum) && (n === 2 || n === 4 || n === 6)) { // Colonne numeriche (Prezzo, Giorni)
+                    if (dir == "asc") {
+                        if (xNum > yNum) { shouldSwitch = true; break; }
+                    } else {
+                        if (xNum < yNum) { shouldSwitch = true; break; }
+                    }
+                } else { // Colonne testo
+                    if (dir == "asc") {
+                        if (xContent > yContent) { shouldSwitch = true; break; }
+                    } else {
+                        if (xContent < yContent) { shouldSwitch = true; break; }
                     }
                 }
             }
-            rows[i].style.display = showRow ? "" : "none";
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;      
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
         }
     }
 
-    let sortOrder = {};
-    window.sortTable = function(n) {
-        let tbody = document.getElementById("tableBody");
-        let rows = Array.from(tbody.rows);
-        sortOrder[n] = !sortOrder[n];
-        rows.sort((a, b) => {
-            let x = a.cells[n].innerText.toLowerCase().replace('%','').replace(',','.');
-            let y = b.cells[n].innerText.toLowerCase().replace('%','').replace(',','.');
-            
-            let numX = parseFloat(x);
-            let numY = parseFloat(y);
-            
-            if (!isNaN(numX) && !isNaN(numY)) {
-                return sortOrder[n] ? numX - numY : numY - numX;
-            }
-            return sortOrder[n] ? x.localeCompare(y) : y.localeCompare(x);
-        });
-        rows.forEach(r => tbody.appendChild(r));
-    }
-
-    update();
-    setInterval(update, 60000);
+    // Avvio e Auto-refresh
+    loadData();
+    setInterval(loadData, 30000); // Aggiorna ogni 30 secondi
 </script>
+
 </body>
 </html>
