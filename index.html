@@ -44,10 +44,19 @@
         .pos-var { color: #00ff00; font-weight: 500; }
         .neg-var { color: #ff4444; font-weight: 500; }
 
-        /* Stellina Preferiti */
+        /* Stelline Watchlist */
         .star-icon { cursor: pointer; font-size: 18px; color: #3d4151; transition: color 0.2s; user-select: none; }
         .star-icon.active { color: #ffca28; }
-        .star-cell { text-align: center; font-weight: bold; }
+        .star-cell { text-align: center; }
+
+        /* Stellina Filtro Master */
+        .filter-star-toggle { 
+            cursor: pointer; 
+            font-size: 20px; 
+            color: rgba(255,255,255,0.2); 
+            transition: all 0.2s;
+        }
+        .filter-star-toggle.enabled { color: #ffca28; text-shadow: 0 0 10px rgba(255, 202, 40, 0.5); }
     </style>
 </head>
 <body>
@@ -86,7 +95,9 @@
                         <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
                         <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
                         <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Scrivi 'SI'" onkeyup="filterTable()"></th>
+                        <th style="text-align: center;">
+                            <span id="watchlistToggle" class="filter-star-toggle" onclick="toggleWatchlistFilter()">★</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -97,9 +108,21 @@
 <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
 
-    // Gestione Preferiti tramite LocalStorage
+    // Stato globale
     let favorites = JSON.parse(localStorage.getItem('myWatchlist')) || [];
+    let watchlistOnly = false;
+    let currentSort = { column: null, ascending: true };
 
+    // Toggle Watchlist Generale (Filtro master)
+    function toggleWatchlistFilter() {
+        watchlistOnly = !watchlistOnly;
+        const star = document.getElementById('watchlistToggle');
+        if(watchlistOnly) star.classList.add('enabled');
+        else star.classList.remove('enabled');
+        filterTable();
+    }
+
+    // Toggle singola stella
     function toggleFavorite(ticker, element) {
         const index = favorites.indexOf(ticker);
         if (index > -1) {
@@ -112,7 +135,6 @@
             element.closest('td').setAttribute('data-val', 'SI');
         }
         localStorage.setItem('myWatchlist', JSON.stringify(favorites));
-        // Se c'è un filtro attivo sulla watchlist, aggiorna la vista
         filterTable();
     }
 
@@ -197,7 +219,14 @@
                 tbody.appendChild(tr);
             });
 
+            // 1. Riapplica i filtri
             filterTable();
+
+            // 2. Riapplica l'ordinamento se esistente
+            if (currentSort.column !== null) {
+                // Passiamo true come secondo parametro per NON invertire l'ordine attuale
+                sortTable(currentSort.column, true);
+            }
 
         } catch (e) { 
             console.error("Errore Caricamento:", e); 
@@ -214,17 +243,23 @@
 
         for (let i = 0; i < rows.length; i++) {
             let showRow = true;
-            for (let j = 0; j < inputs.length; j++) {
-                let filter = inputs[j].value.toUpperCase();
-                let td = rows[i].getElementsByTagName("td")[j];
-                
-                if (td && filter) {
-                    // Se è la colonna watchlist, controlliamo l'attributo data-val
-                    let textToSearch = (j === 9) ? td.getAttribute('data-val') : td.innerText;
-                    
-                    if (!textToSearch.toUpperCase().includes(filter)) {
-                        showRow = false;
-                        break;
+            
+            // Controllo Filtro Watchlist (Stellina Master)
+            if (watchlistOnly) {
+                let favStatus = rows[i].getElementsByTagName("td")[9].getAttribute('data-val');
+                if (favStatus !== 'SI') showRow = false;
+            }
+
+            // Controllo Filtri Testuali
+            if (showRow) {
+                for (let j = 0; j < inputs.length; j++) {
+                    let filter = inputs[j].value.toUpperCase();
+                    let td = rows[i].getElementsByTagName("td")[j];
+                    if (td && filter) {
+                        if (!td.innerText.toUpperCase().includes(filter)) {
+                            showRow = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -232,11 +267,20 @@
         }
     }
 
-    let sortOrder = {};
-    window.sortTable = function(n) {
+    window.sortTable = function(n, keepCurrentOrder = false) {
         let tbody = document.getElementById("tableBody");
         let rows = Array.from(tbody.rows);
-        sortOrder[n] = !sortOrder[n];
+        
+        // Se non è un re-order forzato, invertiamo l'ordine
+        if (!keepCurrentOrder) {
+            if (currentSort.column === n) {
+                currentSort.ascending = !currentSort.ascending;
+            } else {
+                currentSort.column = n;
+                currentSort.ascending = true;
+            }
+        }
+
         rows.sort((a, b) => {
             let valA = (n === 9) ? a.cells[n].getAttribute('data-val') : a.cells[n].innerText;
             let valB = (n === 9) ? b.cells[n].getAttribute('data-val') : b.cells[n].innerText;
@@ -246,10 +290,13 @@
             let numX = parseFloat(x);
             let numY = parseFloat(y);
             
+            let res = 0;
             if (!isNaN(numX) && !isNaN(numY)) {
-                return sortOrder[n] ? numX - numY : numY - numX;
+                res = numX - numY;
+            } else {
+                res = x.localeCompare(y);
             }
-            return sortOrder[n] ? x.localeCompare(y) : y.localeCompare(x);
+            return currentSort.ascending ? res : -res;
         });
         rows.forEach(r => tbody.appendChild(r));
     }
