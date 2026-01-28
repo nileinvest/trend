@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
@@ -59,9 +59,9 @@
             <div class="controls">
                 <div class="update-info">
                     <div id="status" style="color: #4caf50; font-weight: bold; font-size: 11px;">● AUTO-UPDATE 04:00</div>
-                    <div id="lastSync" style="color: #787b86; font-size: 10px;">Ultimo sync: --:--:--</div>
+                    <div id="lastSync" style="color: #787b86; font-size: 10px;">Last Sync: --:--:--</div>
                 </div>
-                <button id="refreshBtn" class="refresh-btn" onclick="manualUpdate()">🔄 Aggiorna Ora</button>
+                <button id="refreshBtn" class="refresh-btn" onclick="manualUpdate()">🔄 Refresh Now</button>
             </div>
         </div>
         
@@ -70,26 +70,26 @@
                 <thead>
                     <tr>
                         <th onclick="handleSort(0)">Ticker</th>
-                        <th onclick="handleSort(1)">MARKETS</th> 
-                        <th onclick="handleSort(2)">LAST PRICE</th>
+                        <th onclick="handleSort(1)">Markets</th> 
+                        <th onclick="handleSort(2)">Last Price</th>
                         <th onclick="handleSort(3)">Trend W</th>
-                        <th onclick="handleSort(4)">Price Since Flip W</th>
+                        <th onclick="handleSort(4)">Price Flip W</th>
                         <th onclick="handleSort(5)">Var % W</th>
                         <th onclick="handleSort(6)">Trend D</th>
-                        <th onclick="handleSort(7)">Price Since Flip D</th>
+                        <th onclick="handleSort(7)">Price Flip D</th>
                         <th onclick="handleSort(8)">Var % D</th>
-                        <th onclick="handleSort(9)">MY WATCHLIST</th>
+                        <th onclick="handleSort(9)">My Watchlist</th>
                     </tr>
                     <tr class="filter-row">
                         <th><input type="text" class="filter-input" placeholder="🔍 Ticker" onkeyup="filterTable()"></th>
                         <th><input type="text" class="filter-input" placeholder="Market..." onkeyup="filterTable()"></th> 
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
-                        <th><input type="text" class="filter-input" placeholder="Filtra..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
+                        <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
                         <th style="text-align: center;">
                             <span id="watchlistToggle" class="filter-star-toggle" onclick="toggleWatchlistFilter()">★</span>
                         </th>
@@ -122,7 +122,7 @@
         } else {
             favorites.push(ticker);
             element.classList.add('active');
-            element.closest('td').setAttribute('data-val', 'SI');
+            element.closest('td').setAttribute('data-val', 'YES');
         }
         localStorage.setItem('myWatchlist', JSON.stringify(favorites));
         filterTable();
@@ -143,13 +143,12 @@
     async function manualUpdate() {
         const btn = document.getElementById('refreshBtn');
         btn.disabled = true;
-        btn.innerText = "⏳ Sincronizzazione...";
+        btn.innerText = "⏳ Syncing...";
         
         await update();
         
-        // Cooldown forzato di 5 secondi per dare tempo a Google di "propagare" i dati
         setTimeout(() => {
-            btn.innerText = "🔄 Aggiorna Ora";
+            btn.innerText = "🔄 Refresh Now";
             btn.disabled = false;
         }, 5000);
     }
@@ -184,19 +183,18 @@
                     <td class="ticker-style">${ticker}</td><td class="market-style">${market}</td><td style="font-weight:bold;color:#fff;">${lastP}</td>
                     <td>${formatSign(trendW)}</td><td>${flipW}</td><td>${formatVar(varW)}</td>
                     <td>${formatSign(trendD)}</td><td>${flipD}</td><td>${formatVar(varD)}</td>
-                    <td class="star-cell" data-val="${isFav?'SI':'NO'}"><span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${ticker}',this)">★</span></td>
+                    <td class="star-cell" data-val="${isFav?'YES':'NO'}"><span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${ticker}',this)">★</span></td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Update timestamp
             const now = new Date();
-            document.getElementById('lastSync').innerText = "Ultimo sync: " + now.toLocaleTimeString();
+            document.getElementById('lastSync').innerText = "Last Sync: " + now.toLocaleTimeString();
 
             filterTable();
             if (currentSort.column !== null) sortTable(currentSort.column, true);
 
-        } catch (e) { console.error("Errore Caricamento:", e); }
+        } catch (e) { console.error("Update Error:", e); }
     }
 
     window.filterTable = function() {
@@ -204,7 +202,7 @@
         const rows = document.getElementById("tableBody").getElementsByTagName("tr");
         for (let row of rows) {
             let show = true;
-            if (watchlistOnly && row.cells[9].getAttribute('data-val') !== 'SI') show = false;
+            if (watchlistOnly && row.cells[9].getAttribute('data-val') !== 'YES') show = false;
             if (show) {
                 for (let j = 0; j < inputs.length; j++) {
                     let f = inputs[j].value.toUpperCase();
@@ -235,16 +233,16 @@
         rows.forEach(r => tbody.appendChild(r));
     }
 
-    function pianificaAggiornamentoQuattroMattina() {
-        const ora = new Date();
+    function scheduleAutoUpdate() {
+        const now = new Date();
         const target = new Date();
         target.setHours(4, 0, 0, 0);
-        if (ora >= target) target.setDate(target.getDate() + 1);
-        setTimeout(() => { update(); pianificaAggiornamentoQuattroMattina(); }, target - ora);
+        if (now >= target) target.setDate(target.getDate() + 1);
+        setTimeout(() => { update(); scheduleAutoUpdate(); }, target - now);
     }
 
     update();
-    pianificaAggiornamentoQuattroMattina();
+    scheduleAutoUpdate();
 </script>
 </body>
 </html>
