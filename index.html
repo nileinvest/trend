@@ -19,6 +19,9 @@
         .info-container { display: flex; flex-direction: column; align-items: flex-end; }
         #status { color: #4caf50; font-weight: bold; font-size: 18px; letter-spacing: 0.5px; }
         
+        /* Memberstack: Nasconde il contenuto finché non è verificato per evitare flash */
+        [data-ms-content="premium"] { display: none; }
+
         .signal-stats { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
         .stat-box { font-weight: bold; font-size: 13px; text-transform: uppercase; padding: 8px 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 8px; }
         .buy-stat { color: #00ff00; background: rgba(0, 255, 0, 0.1); border-color: rgba(0, 255, 0, 0.2); }
@@ -53,10 +56,10 @@
                 <div class="logo-area">
                     <h2>NILE - Follow the trend</h2>
                     <button data-ms-content="!premium" data-ms-modal="login" class="ms-auth-btn">Log In</button>
-                    <a data-ms-content="premium" href="#/ms/logout" class="ms-auth-btn" style="background:#3d4151; display: none;">Log Out</a>
+                    <a data-ms-content="premium" href="#/ms/logout" class="ms-auth-btn" style="background:#3d4151">Log Out</a>
                 </div>
                 
-                <div class="signal-stats" data-ms-content="premium" style="display: none;">
+                <div class="signal-stats" data-ms-content="premium">
                     <div id="buyCounter" class="stat-box buy-stat">BUY SIGNAL TREND W: 0</div>
                     <div id="sellCounter" class="stat-box sell-stat">SELL SIGNAL TREND W: 0</div>
                     <div id="greenFlip" class="stat-box buy-stat">% GREEN SINCE FLIP W: 0%</div>
@@ -66,13 +69,13 @@
             
             <div class="info-container">
                 <div id="status">● AUTO-UPDATE 4:00 AM</div>
-                <div data-ms-content="premium" style="margin-top:10px; font-size:12px; color:#8d92a3; display: none;">
+                <div data-ms-content="premium" style="margin-top:10px; font-size:12px; color:#8d92a3">
                     User: <span data-ms-member="email">...</span>
                 </div>
             </div>
         </div>
         
-        <div class="table-container" data-ms-content="premium" style="display: none;">
+        <div class="table-container" data-ms-content="premium">
             <table id="mainTable">
                 <thead>
                     <tr>
