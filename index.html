@@ -2,378 +2,236 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <script data-memberstack-app="app_cmlf9re4g00u40ss19rl32mj9" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NILE - Trend Monitor</title>
     
+    <script data-memberstack-app="app_cmlf9re4g00u40ss19rl32mj9" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
     <style>
-        /* IL TUO CSS ORIGINALE (NON TOCCATO) */
-        body { margin: 0; padding: 20px; background-color: #131722; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0e0; }
-        .data-section { max-width: 1600px; margin: 0 auto; background-color: #1e222d; border-radius: 12px; border: 1px solid #2a2e39; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
-        .header-panel { padding: 20px; border-bottom: 1px solid #2a2e39; background: #1e222d; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
-        h2 { margin: 0; font-size: 24px; color: #d1d4dc; letter-spacing: 1px; }
-        .info-container { display: flex; flex-direction: column; align-items: flex-end; }
-        #status { color: #4caf50; font-weight: bold; font-size: 18px; letter-spacing: 0.5px; }
-        .signal-stats { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-        .stat-box { font-weight: bold; font-size: 13px; text-transform: uppercase; padding: 8px 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 8px; }
-        .buy-stat { color: #00ff00; background: rgba(0, 255, 0, 0.1); border-color: rgba(0, 255, 0, 0.2); }
-        .sell-stat { color: #ff4444; background: rgba(255, 68, 68, 0.1); border-color: rgba(255, 68, 68, 0.2); }
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
-        th { position: sticky; top: 0; background: #2a2e39; color: #b2b5be; padding: 15px 12px; cursor: pointer; border-bottom: 2px solid #363a45; font-weight: 600; text-transform: uppercase; font-size: 11px; }
-        td { padding: 12px 12px; border-bottom: 1px solid #2a2e39; white-space: nowrap; }
-        tr:hover { background-color: #262b3a; }
-        .filter-row th { background: #1e222d; padding: 8px 12px; cursor: default; }
-        .filter-input { width: 100%; background: #131722; border: 1px solid #3d4151; color: #fff; font-size: 11px; padding: 6px; border-radius: 4px; box-sizing: border-box; }
-        .buy-pill { color: #00ff00; font-weight: bold; background: rgba(0, 255, 0, 0.1); padding: 4px 8px; border-radius: 4px; }
-        .sell-pill { color: #ff4444; font-weight: bold; background: rgba(255, 68, 68, 0.1); padding: 4px 8px; border-radius: 4px; }
-        .ticker-style { font-weight: bold; color: #2962ff; font-size: 15px; }
-        .market-style { color: #8d92a3; font-style: italic; font-size: 13px; }
-        .sector-style { color: #b2b5be; font-size: 12px; }
-        .pos-var { color: #00ff00; font-weight: 500; }
-        .neg-var { color: #ff4444; font-weight: 500; }
-        .star-icon { cursor: pointer; font-size: 18px; color: #3d4151; transition: color 0.2s; user-select: none; }
-        .star-icon.active { color: #ffca28; }
-        .star-cell { text-align: center; }
-        .filter-star-toggle { cursor: pointer; font-size: 20px; color: rgba(255,255,255,0.2); transition: all 0.2s; }
-        .filter-star-toggle.enabled { color: #ffca28; text-shadow: 0 0 10px rgba(255, 202, 40, 0.5); }
+        /* --- STILE GENERALE --- */
+        body {
+            background-color: #0f172a; /* Dark Blue Theme */
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-        /* --- FIX DEFINITIVO LOGIN SCREEN --- */
-        #login-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            display: none; /* Attivato da JS */
+        /* --- SEZIONE HERO (LOGIN) --- */
+        .hero-section {
+            display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 10000;
-            /* Overlay scuro + Immagine Stock Professionale Candlestick */
-            background: linear-gradient(rgba(19, 23, 34, 0.7), rgba(19, 23, 34, 0.9)), 
-                        url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .login-card {
-            background: rgba(30, 34, 45, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 60px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            justify-content: center;
+            padding: 80px 20px 40px 20px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            animation: fadeIn 0.8s ease-out;
+            border-bottom: 1px solid #334155;
         }
 
+        .hero-title {
+            font-size: 3rem;
+            margin: 0 0 10px 0;
+            color: #38bdf8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* BOTTONE LOGIN */
+        .btn-login-hero {
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-login-hero:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.5);
+        }
+
+        /* DISCLAIMER BOX */
+        .disclaimer-box {
+            margin-top: 40px;
+            padding: 20px;
+            max-width: 700px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* --- SEZIONE FEATURES (ZIG-ZAG) --- */
+        .features-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 100px;
+            gap: 60px;
+            opacity: 0;
+            animation: fadeIn 1s forwards; /* Effetto comparsa */
+        }
+
+        /* Inverte l'ordine per le righe pari (Zig-Zag) */
+        .feature-row:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text h2 {
+            color: #f8fafc;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-left: 4px solid #38bdf8;
+            padding-left: 15px;
+        }
+
+        .feature-text p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+        }
+
+        .feature-image {
+            flex: 1.2; /* L'immagine occupa leggermente più spazio */
+        }
+
+        .feature-image img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-image img:hover {
+            transform: scale(1.02);
+        }
+
+        /* Animazione semplice */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        #login-screen h1 { 
-            color: #2962ff; 
-            letter-spacing: 8px; 
-            font-size: 64px; 
-            margin: 0; 
-            font-weight: 900;
-        }
-        
-        #login-screen p { 
-            color: #ffffff; 
-            margin-bottom: 40px; 
-            font-size: 18px; 
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            opacity: 0.8;
-        }
+        /* RESPONSIVE PER MOBILE */
+        @media (max-width: 900px) {
+            .feature-row, .feature-row:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+            }
 
-        .btn-login { 
-            background: #2962ff; 
-            color: #fff; 
-            padding: 16px 45px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 16px;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-        .btn-login:hover { background: #1e4bd8; transform: scale(1.05); }
-
-        /* --- DASHBOARD ELEMENTS --- */
-        #dashboard-screen { display: none; }
-        .logout-btn { background: transparent; border: 1px solid #3d4151; color: #8d92a3; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 15px; }
-        
-        #premium-banner { 
-            background: #2962ff; 
-            color: white; 
-            text-align: center; 
-            padding: 12px; 
-            font-weight: bold; 
-            font-size: 13px;
-            display: none; 
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            border-radius: 4px;
+            .feature-text h2 {
+                border-left: none;
+                border-bottom: 3px solid #38bdf8;
+                display: inline-block;
+                padding-bottom: 10px;
+                padding-left: 0;
+            }
+            
+            .hero-title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-card">
-            <h1>NILE</h1>
-            <p>Follow The Trend</p>
-            <button class="btn-login" data-ms-modal="login">ACCESS DASHBOARD</button>
-        </div>
-    </div>
-
-    <div id="dashboard-screen">
-        <div id="premium-banner">WARNING: FREE PLAN - Limited View. Upgrade to Premium for full access.</div>
+    <div class="hero-section">
+        <h1 class="hero-title">NILE TREND</h1>
+        <p class="hero-subtitle">Professional Market Analytics & Signal Tracking</p>
         
-        <div class="data-section">
-            <div class="header-panel">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center;">
-                        <h2>Dashboard</h2>
-                        <button class="logout-btn" data-ms-action="logout">LOGOUT</button>
-                    </div>
-                    <div class="signal-stats">
-                        <div id="buyCounter" class="stat-box buy-stat">BUY SIGNAL TREND W: 0</div>
-                        <div id="sellCounter" class="stat-box sell-stat">SELL SIGNAL TREND W: 0</div>
-                        <div id="greenFlip" class="stat-box buy-stat">% GREEN SINCE FLIP W: 0%</div>
-                        <div id="redFlip" class="stat-box sell-stat">% RED SINCE FLIP W: 0%</div>
-                    </div>
-                </div>
-                
-                <div class="info-container">
-                    <div id="status">● AUTO-UPDATE 4:00 AM Italian time</div>
-                    <div style="margin-top: 10px; font-size: 11px; color: #8d92a3;">
-                        User: <span data-ms-member="email">...</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <table id="mainTable">
-                    <thead>
-                        <tr>
-                            <th onclick="handleSort(0)">Ticker</th>
-                            <th onclick="handleSort(1)">Markets</th> 
-                            <th onclick="handleSort(2)">Sector</th>
-                            <th onclick="handleSort(3)">Industry</th>
-                            <th onclick="handleSort(4)">Last Price</th>
-                            <th onclick="handleSort(5)">Trend W</th>
-                            <th onclick="handleSort(6)">Price Since Flip W</th>
-                            <th onclick="handleSort(7)">Var % W</th>
-                            <th onclick="handleSort(8)">Trend D</th>
-                            <th onclick="handleSort(9)">Price Since Flip D</th>
-                            <th onclick="handleSort(10)">Var % D</th>
-                            <th onclick="handleSort(11)">My Watchlist</th>
-                        </tr>
-                        <tr class="filter-row">
-                            <th><input type="text" class="filter-input" placeholder="🔍 Ticker" onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Market..." onkeyup="filterTable()"></th> 
-                            <th><input type="text" class="filter-input" placeholder="Sector..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Industry..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th><input type="text" class="filter-input" placeholder="Filter..." onkeyup="filterTable()"></th>
-                            <th style="text-align: center;">
-                                <span id="watchlistToggle" class="filter-star-toggle" onclick="toggleWatchlistFilter()">★</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
+        <a class="btn-login-hero" href="#" data-ms-modal="login">Access Dashboard</a>
+
+        <div class="disclaimer-box">
+            <strong>DISCLAIMER:</strong><br>
+            The trend indicators and data provided on this platform are strictly for analytical purposes to monitor asset movements. 
+            They do not constitute financial advice, investment recommendations, or solicitations to buy or sell any assets. 
+            Trading involves significant risk. Past performance is not indicative of future results.
         </div>
     </div>
 
-<script>
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
+    <div class="features-container">
 
-    let favorites = JSON.parse(localStorage.getItem('myWatchlist')) || [];
-    let watchlistOnly = false;
-    let currentSort = { column: null, ascending: true };
-    let isPremiumUser = false;
+        <div class="feature-row">
+            <div class="feature-image">
+                <img src="update.png" alt="Automatic Updates">
+            </div>
+            <div class="feature-text">
+                <h2>Always Sync, Always Live</h2>
+                <p>
+                    Data freshness is paramount. The system performs an automatic refresh every time you open the dashboard. 
+                    Additionally, a full global data synchronization occurs daily at <strong>04:00 AM (CET)</strong>, ensuring you have the latest trend calculations ready before the European markets open.
+                </p>
+            </div>
+        </div>
 
-    // --- LOGICA DATI (TUA ORIGINALE) ---
-    function toggleWatchlistFilter() {
-        watchlistOnly = !watchlistOnly;
-        document.getElementById('watchlistToggle').classList.toggle('enabled', watchlistOnly);
-        filterTable();
-    }
+        <div class="feature-row">
+            <div class="feature-image">
+                <img src="favorites.png" alt="Watchlist Feature">
+            </div>
+            <div class="feature-text">
+                <h2>Smart Watchlist</h2>
+                <p>
+                    Focus on what matters. Simply click the <strong>Star Icon</strong> next to any ticker to add it to your personal Watchlist. 
+                    Toggle the star filter at the top of the column to instantly hide all noise and view only your selected assets.
+                </p>
+            </div>
+        </div>
 
-    function toggleFavorite(ticker, element) {
-        const index = favorites.indexOf(ticker);
-        if (index > -1) {
-            favorites.splice(index, 1);
-            element.classList.remove('active');
-            element.closest('td').setAttribute('data-val', 'NO');
-        } else {
-            favorites.push(ticker);
-            element.classList.add('active');
-            element.closest('td').setAttribute('data-val', 'YES');
-        }
-        localStorage.setItem('myWatchlist', JSON.stringify(favorites));
-        filterTable();
-    }
+        <div class="feature-row">
+            <div class="feature-image">
+                <img src="filter.png" alt="Advanced Filtering">
+            </div>
+            <div class="feature-text">
+                <h2>Granular Control</h2>
+                <p>
+                    Navigate the market with precision. Every column is fully <strong>sortable and filterable</strong>. 
+                    Sort by Trend Direction, Percentage Change, or Sector. Use the search bars to isolate specific industries or market caps instantly.
+                </p>
+            </div>
+        </div>
 
-    function parseCSVLine(line, sep) {
-        const result = [];
-        let cur = '', inQuotes = false;
-        for (let char of line) {
-            if (char === '"') inQuotes = !inQuotes;
-            else if (char === sep && !inQuotes) { result.push(cur.trim()); cur = ''; }
-            else cur += char;
-        }
-        result.push(cur.trim());
-        return result;
-    }
+    </div>
 
-    function updateCounters() {
-        let buyCount = 0; let sellCount = 0; let buyGreen = 0; let buyRed = 0;
-        const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let row of rows) {
-            if (row.style.display !== "none") {
-                let trendW = row.cells[5].innerText.toUpperCase();
-                let varWStr = row.cells[7].innerText.replace(',', '.').replace('%', '').trim();
-                let varW = parseFloat(varWStr);
-                if (trendW.includes("BUY")) {
-                    buyCount++;
-                    if (!isNaN(varW)) { if (varW > 0) buyGreen++; else if (varW < 0) buyRed++; }
-                } else if (trendW.includes("SELL")) { sellCount++; }
+    <script>
+        // Check rapido: se l'utente è GIA' loggato e ha il piano, Memberstack farà il redirect.
+        // Se è loggato ma non ha il piano, resta qui (configurazione da fare nel pannello MS).
+        window.$memberstackDom.getCurrentMember().then(({ data: member }) => {
+            if (member && member.planConnections && member.planConnections.length > 0) {
+                 // Opzionale: redirect forzato lato client se serve, 
+                 // ma meglio lasciar fare a Memberstack settings.
             }
-        }
-        let greenPerc = buyCount > 0 ? Math.round((buyGreen / buyCount) * 100) : 0;
-        let redPerc = buyCount > 0 ? Math.round((buyRed / buyCount) * 100) : 0;
-        document.getElementById("buyCounter").innerText = "BUY SIGNAL TREND W: " + buyCount;
-        document.getElementById("sellCounter").innerText = "SELL SIGNAL TREND W: " + sellCount;
-        document.getElementById("greenFlip").innerText = "% GREEN SINCE FLIP W: " + greenPerc + "%";
-        document.getElementById("redFlip").innerText = "% RED SINCE FLIP W: " + redPerc + "%";
-    }
-
-    async function update() {
-        try {
-            const res = await fetch(csvUrl + '&nocache=' + Date.now());
-            const text = await res.text();
-            const sep = text.includes(';') ? ';' : ',';
-            const lines = text.split(/\r?\n/);
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            let rowCount = 0;
-            lines.forEach((line, index) => {
-                if (index === 0 || !line) return;
-                if (!isPremiumUser && rowCount >= 5) return; 
-                const c = parseCSVLine(line, sep);
-                const ticker = c[0] || "";
-                if (ticker.length < 2) return;
-                const market = c[1]||"", sector = c[17]||"-", industry = c[18]||"-", lastP = c[14]||"-", trendW = c[4]||"", flipW = c[6]||"", varW = c[15]||"-", trendD = c[9]||"", flipD = c[11]||"", varD = c[16]||"-";
-                const isFav = favorites.includes(ticker);
-                const formatSign = v => v.toUpperCase().includes('BUY') ? `<span class="buy-pill">${v}</span>` : v.toUpperCase().includes('SELL') ? `<span class="sell-pill">${v}</span>` : v;
-                const formatVar = v => {
-                    if (v === "-") return v;
-                    const n = parseFloat(v.replace(',','.').replace('%',''));
-                    return isNaN(n) ? v : `<span class="${n>0?'pos-var':n<0?'neg-var':''}">${v}</span>`;
-                };
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="ticker-style">${ticker}</td>
-                    <td class="market-style">${market}</td>
-                    <td class="sector-style">${sector}</td>
-                    <td class="sector-style">${industry}</td>
-                    <td style="font-weight:bold;color:#fff;">${lastP}</td>
-                    <td>${formatSign(trendW)}</td>
-                    <td>${flipW}</td>
-                    <td>${formatVar(varW)}</td>
-                    <td>${formatSign(trendD)}</td>
-                    <td>${flipD}</td>
-                    <td>${formatVar(varD)}</td>
-                    <td class="star-cell" data-val="${isFav?'YES':'NO'}">
-                        <span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${ticker}',this)">★</span>
-                    </td>`;
-                tbody.appendChild(tr);
-                rowCount++;
-            });
-            filterTable();
-            if (currentSort.column !== null) sortTable(currentSort.column, true);
-            updateCounters();
-        } catch (e) { console.error("Update Error:", e); }
-    }
-
-    window.filterTable = function() {
-        const inputs = document.getElementsByClassName("filter-input");
-        const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let row of rows) {
-            let show = true;
-            if (watchlistOnly && row.cells[11].getAttribute('data-val') !== 'YES') show = false;
-            if (show) {
-                for (let j = 0; j < inputs.length; j++) {
-                    let f = inputs[j].value.toUpperCase();
-                    if (f && !row.cells[j].innerText.toUpperCase().includes(f)) { show = false; break; }
-                }
-            }
-            row.style.display = show ? "" : "none";
-        }
-        updateCounters();
-    }
-
-    window.handleSort = function(n) {
-        if (currentSort.column === n) currentSort.ascending = !currentSort.ascending;
-        else { currentSort.column = n; currentSort.ascending = true; }
-        sortTable(n, true);
-    }
-
-    window.sortTable = function(n, force = false) {
-        const tbody = document.getElementById("tableBody");
-        const rows = Array.from(tbody.rows);
-        rows.sort((a, b) => {
-            let valA = (n===11) ? a.cells[n].getAttribute('data-val') : a.cells[n].innerText;
-            let valB = (n===11) ? b.cells[n].getAttribute('data-val') : b.cells[n].innerText;
-            let x = valA.toLowerCase().replace('%','').replace(',','.'), y = valB.toLowerCase().replace('%','').replace(',','.');
-            let numX = parseFloat(x), numY = parseFloat(y);
-            let res = (!isNaN(numX) && !isNaN(numY)) ? numX - numY : x.localeCompare(y);
-            return currentSort.ascending ? res : -res;
         });
-        rows.forEach(r => tbody.appendChild(r));
-    }
-
-    function scheduleAutoUpdate() {
-        const now = new Date();
-        const target = new Date();
-        target.setHours(4, 0, 0, 0);
-        if (now >= target) target.setDate(target.getDate() + 1);
-        setTimeout(() => { update(); scheduleAutoUpdate(); }, target - now);
-    }
-
-    // --- GESTIONE LOGIN/DASHBOARD ---
-    window.addEventListener('load', async () => {
-        const memberstack = window.$memberstackDom;
-        setTimeout(async () => {
-            const { data: member } = await memberstack.getCurrentMember();
-            if (!member) {
-                // UTENTE NON LOGGATO
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('dashboard-screen').style.display = 'none';
-            } else {
-                // UTENTE LOGGATO
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard-screen').style.display = 'block';
-                isPremiumUser = member.planConnections && member.planConnections.some(pc => pc.planId === "premium" || pc.planId.startsWith("pln_"));
-                if (!isPremiumUser) document.getElementById('premium-banner').style.display = 'block';
-                update();
-                scheduleAutoUpdate();
-            }
-        }, 800);
-    });
-</script>
+    </script>
 </body>
 </html>
