@@ -3,235 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NILE - Trend Monitor</title>
-    
+    <title>NILE Dashboard</title>
+    <title>Dashboard</title>
     <script data-memberstack-app="app_cmlf9re4g00u40ss19rl32mj9" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
 
     <style>
-        /* --- STILE GENERALE --- */
-        body {
-            background-color: #0f172a; /* Dark Blue Theme */
-            color: #e2e8f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+@@ -38,16 +37,17 @@
+        .filter-star-toggle { cursor: pointer; font-size: 20px; color: rgba(255,255,255,0.2); transition: all 0.2s; }
+        .filter-star-toggle.enabled { color: #ffca28; text-shadow: 0 0 10px rgba(255, 202, 40, 0.5); }
 
-        /* --- SEZIONE HERO (LOGIN) --- */
-        .hero-section {
-            display: flex;
+        /* --- LOGIN SCREEN --- */
+        /* --- FIX DEFINITIVO LOGIN SCREEN --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            display: none;
+            display: none; /* Attivato da JS */
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            padding: 80px 20px 40px 20px;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            text-align: center;
-            border-bottom: 1px solid #334155;
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            margin: 0 0 10px 0;
-            color: #38bdf8;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        /* BOTTONE LOGIN */
-        .btn-login-hero {
-            background: #2563eb;
-            color: #ffffff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 15px 50px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-login-hero:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.5);
-        }
-
-        /* DISCLAIMER BOX */
-        .disclaimer-box {
-            margin-top: 40px;
-            padding: 20px;
-            max-width: 700px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid #334155;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            color: #64748b;
-            line-height: 1.4;
-        }
-
-        /* --- SEZIONE FEATURES (ZIG-ZAG) --- */
-        .features-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-
-        .feature-row {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 100px;
-            gap: 60px;
-            opacity: 0;
-            animation: fadeIn 1s forwards; /* Effetto comparsa */
+            z-index: 10000;
+            /* Overlay scuro + Immagine Stock Professionale Candlestick */
+            background: linear-gradient(rgba(19, 23, 34, 0.7), rgba(19, 23, 34, 0.9)), 
+                        url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+@@ -105,8 +105,7 @@
+
+        /* --- DASHBOARD ELEMENTS --- */
+        #dashboard-screen { display: none; }
+        .logout-btn { background: transparent; border: 1px solid #3d4151; color: #8d92a3; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 15px; transition: 0.2s; }
+        .logout-btn:hover { background: #3d4151; color: #fff; }
+        .logout-btn { background: transparent; border: 1px solid #3d4151; color: #8d92a3; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 15px; }
+
+        #premium-banner { 
+            background: #2962ff; 
+@@ -120,20 +119,6 @@
+            margin-bottom: 15px;
+            border-radius: 4px;
         }
 
-        /* Inverte l'ordine per le righe pari (Zig-Zag) */
-        .feature-row:nth-child(even) {
-            flex-direction: row-reverse;
+        /* Loading indicator */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
         }
-
-        .feature-text {
-            flex: 1;
-        }
-
-        .feature-text h2 {
-            color: #f8fafc;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            border-left: 4px solid #38bdf8;
-            padding-left: 15px;
-        }
-
-        .feature-text p {
-            font-size: 1.1rem;
-            color: #cbd5e1;
-        }
-
-        .feature-image {
-            flex: 1.2; /* L'immagine occupa leggermente più spazio */
-        }
-
-        .feature-image img {
-            width: 100%;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-image img:hover {
-            transform: scale(1.02);
-        }
-
-        /* Animazione semplice */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* RESPONSIVE PER MOBILE */
-        @media (max-width: 900px) {
-            .feature-row, .feature-row:nth-child(even) {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .feature-text h2 {
-                border-left: none;
-                border-bottom: 3px solid #38bdf8;
-                display: inline-block;
-                padding-bottom: 10px;
-                padding-left: 0;
-            }
-            
-            .hero-title { font-size: 2rem; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+@@ -147,7 +132,7 @@ <h1>NILE</h1>
+    </div>
 
-    <div class="hero-section">
-        <h1 class="hero-title">NILE TREND</h1>
-        <p class="hero-subtitle">Professional Market Analytics & Signal Tracking</p>
+    <div id="dashboard-screen">
+        <div id="premium-banner">⚠️ FREE PLAN - Limited to 5 stocks. Upgrade to Premium for full access.</div>
+        <div id="premium-banner">WARNING: FREE PLAN - Limited View. Upgrade to Premium for full access.</div>
+
+        <div class="data-section">
+            <div class="header-panel">
+@@ -167,7 +152,7 @@ <h2>Dashboard</h2>
+                <div class="info-container">
+                    <div id="status">● AUTO-UPDATE 4:00 AM Italian time</div>
+                    <div style="margin-top: 10px; font-size: 11px; color: #8d92a3;">
+                        User: <span data-ms-member="email">Loading...</span>
+                        User: <span data-ms-member="email">...</span>
+                    </div>
+                </div>
+            </div>
+@@ -255,7 +240,7 @@ <h2>Dashboard</h2>
+    }
+
+    function updateCounters() {
+        let buyCount = 0, sellCount = 0, buyGreen = 0, buyRed = 0;
+        let buyCount = 0; let sellCount = 0; let buyGreen = 0; let buyRed = 0;
+        const rows = document.getElementById("tableBody").getElementsByTagName("tr");
+        for (let row of rows) {
+            if (row.style.display !== "none") {
+@@ -285,28 +270,20 @@ <h2>Dashboard</h2>
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            let rowCount = 0;
+            
+            lines.forEach((line, index) => {
+                if (index === 0 || !line) return;
+                if (!isPremiumUser && rowCount >= 5) return; 
+                
+                const c = parseCSVLine(line, sep);
+                const ticker = c[0] || "";
+                if (ticker.length < 2) return;
+                
+                const market = c[1]||"", sector = c[17]||"-", industry = c[18]||"-", 
+                      lastP = c[14]||"-", trendW = c[4]||"", flipW = c[6]||"", 
+                      varW = c[15]||"-", trendD = c[9]||"", flipD = c[11]||"", varD = c[16]||"-";
+                
+                const market = c[1]||"", sector = c[17]||"-", industry = c[18]||"-", lastP = c[14]||"-", trendW = c[4]||"", flipW = c[6]||"", varW = c[15]||"-", trendD = c[9]||"", flipD = c[11]||"", varD = c[16]||"-";
+                const isFav = favorites.includes(ticker);
+                const formatSign = v => v.toUpperCase().includes('BUY') ? `<span class="buy-pill">${v}</span>` : 
+                                       v.toUpperCase().includes('SELL') ? `<span class="sell-pill">${v}</span>` : v;
+                const formatSign = v => v.toUpperCase().includes('BUY') ? `<span class="buy-pill">${v}</span>` : v.toUpperCase().includes('SELL') ? `<span class="sell-pill">${v}</span>` : v;
+                const formatVar = v => {
+                    if (v === "-") return v;
+                    const n = parseFloat(v.replace(',','.').replace('%',''));
+                    return isNaN(n) ? v : `<span class="${n>0?'pos-var':n<0?'neg-var':''}">${v}</span>`;
+                };
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="ticker-style">${ticker}</td>
+@@ -326,13 +303,10 @@ <h2>Dashboard</h2>
+                tbody.appendChild(tr);
+                rowCount++;
+            });
+            
+            filterTable();
+            if (currentSort.column !== null) sortTable(currentSort.column, true);
+            updateCounters();
+        } catch (e) { 
+            console.error("Update Error:", e); 
+        }
+        } catch (e) { console.error("Update Error:", e); }
+    }
+
+    window.filterTable = function() {
+@@ -364,8 +338,7 @@ <h2>Dashboard</h2>
+        rows.sort((a, b) => {
+            let valA = (n===11) ? a.cells[n].getAttribute('data-val') : a.cells[n].innerText;
+            let valB = (n===11) ? b.cells[n].getAttribute('data-val') : b.cells[n].innerText;
+            let x = valA.toLowerCase().replace('%','').replace(',','.'), 
+                y = valB.toLowerCase().replace('%','').replace(',','.');
+            let x = valA.toLowerCase().replace('%','').replace(',','.'), y = valB.toLowerCase().replace('%','').replace(',','.');
+            let numX = parseFloat(x), numY = parseFloat(y);
+            let res = (!isNaN(numX) && !isNaN(numY)) ? numX - numY : x.localeCompare(y);
+            return currentSort.ascending ? res : -res;
+@@ -381,84 +354,25 @@ <h2>Dashboard</h2>
+        setTimeout(() => { update(); scheduleAutoUpdate(); }, target - now);
+    }
+
+    // --- GESTIONE LOGIN/DASHBOARD CON DEBUGGING MIGLIORATO ---
+    // --- GESTIONE LOGIN/DASHBOARD ---
+    window.addEventListener('load', async () => {
+        console.log("🚀 Pagina caricata, inizializzo Memberstack...");
         
-        <a class="btn-login-hero" href="#" data-ms-modal="login">Access Dashboard</a>
+        const memberstack = window.$memberstackDom;
+        
+        if (!memberstack) {
+            console.error("❌ Memberstack non caricato!");
+            document.getElementById('login-screen').style.display = 'flex';
+            return;
+        }
 
-        <div class="disclaimer-box">
-            <strong>DISCLAIMER:</strong><br>
-            The trend indicators and data provided on this platform are strictly for analytical purposes to monitor asset movements. 
-            They do not constitute financial advice, investment recommendations, or solicitations to buy or sell any assets. 
-            Trading involves significant risk. Past performance is not indicative of future results.
-        </div>
-    </div>
-
-    <div class="features-container">
-
-        <div class="feature-row">
-            <div class="feature-image">
-                <img src="update.png" alt="Automatic Updates">
-            </div>
-            <div class="feature-text">
-                <h2>Always Sync, Always Live</h2>
-                <p>
-                    Data freshness is paramount. The system performs an automatic refresh every time you open the dashboard. 
-                    Additionally, a full global data synchronization occurs daily at <strong>04:00 AM (CET)</strong>, ensuring you have the latest trend calculations ready before the European markets open.
-                </p>
-            </div>
-        </div>
-
-        <div class="feature-row">
-            <div class="feature-image">
-                <img src="favorites.png" alt="Watchlist Feature">
-            </div>
-            <div class="feature-text">
-                <h2>Smart Watchlist</h2>
-                <p>
-                    Focus on what matters. Simply click the <strong>Star Icon</strong> next to any ticker to add it to your personal Watchlist. 
-                    Toggle the star filter at the top of the column to instantly hide all noise and view only your selected assets.
-                </p>
-            </div>
-        </div>
-
-        <div class="feature-row">
-            <div class="feature-image">
-                <img src="filter.png" alt="Advanced Filtering">
-            </div>
-            <div class="feature-text">
-                <h2>Granular Control</h2>
-                <p>
-                    Navigate the market with precision. Every column is fully <strong>sortable and filterable</strong>. 
-                    Sort by Trend Direction, Percentage Change, or Sector. Use the search bars to isolate specific industries or market caps instantly.
-                </p>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        // Check rapido: se l'utente è GIA' loggato e ha il piano, Memberstack farà il redirect.
-        // Se è loggato ma non ha il piano, resta qui (configurazione da fare nel pannello MS).
-        window.$memberstackDom.getCurrentMember().then(({ data: member }) => {
-            if (member && member.planConnections && member.planConnections.length > 0) {
-                 // Opzionale: redirect forzato lato client se serve, 
-                 // ma meglio lasciar fare a Memberstack settings.
+        // Attendi che Memberstack sia pronto
+        setTimeout(async () => {
+            try {
+                console.log("🔍 Controllo stato utente...");
+                const { data: member } = await memberstack.getCurrentMember();
+                
+                console.log("📊 Risultato getCurrentMember:", member);
+                
+                if (!member) {
+                    // UTENTE NON LOGGATO
+                    console.log("❌ Utente non loggato - mostro login screen");
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('dashboard-screen').style.display = 'none';
+                } else {
+                    // UTENTE LOGGATO
+                    console.log("✅ Utente loggato:", member.email || member.id);
+                    console.log("📦 Plan Connections:", member.planConnections);
+                    
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard-screen').style.display = 'block';
+                    
+                    // Controlla se è Premium - VERSIONE MIGLIORATA
+                    if (member.planConnections && Array.isArray(member.planConnections)) {
+                        // Log tutti i plan IDs per debugging
+                        member.planConnections.forEach(pc => {
+                            console.log("🎫 Plan trovato:", pc.planId, pc);
+                        });
+                        
+                        // Controlla se uno dei piani è Premium
+                        // Adatta questi valori ai tuoi plan IDs effettivi di Memberstack
+                        isPremiumUser = member.planConnections.some(pc => {
+                            const planId = pc.planId.toLowerCase();
+                            return planId.includes('premium') || 
+                                   planId === 'pln_premium-0lnx' || // Sostituisci con il tuo plan ID esatto
+                                   pc.status === 'ACTIVE';
+                        });
+                    }
+                    
+                    console.log("💎 È Premium?", isPremiumUser);
+                    
+                    if (!isPremiumUser) {
+                        console.log("⚠️ Utente FREE - mostro banner e limito a 5 righe");
+                        document.getElementById('premium-banner').style.display = 'block';
+                    }
+                    
+                    // Carica i dati
+                    await update();
+                    scheduleAutoUpdate();
+                }
+            } catch (error) {
+                console.error("💥 Errore durante il controllo utente:", error);
+                // In caso di errore, mostra login screen come fallback
+            const { data: member } = await memberstack.getCurrentMember();
+            if (!member) {
+                // UTENTE NON LOGGATO
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('dashboard-screen').style.display = 'none';
+            } else {
+                // UTENTE LOGGATO
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
+                isPremiumUser = member.planConnections && member.planConnections.some(pc => pc.planId === "premium" || pc.planId.startsWith("pln_"));
+                if (!isPremiumUser) document.getElementById('premium-banner').style.display = 'block';
+                update();
+                scheduleAutoUpdate();
             }
-        });
-    </script>
+        }, 500); // Timeout ridotto a 500ms
+    });
+
+    // Event listener per logout
+    document.addEventListener('click', async (e) => {
+        if (e.target.matches('[data-ms-action="logout"]')) {
+            console.log("👋 Logout in corso...");
+            const memberstack = window.$memberstackDom;
+            await memberstack.logout();
+            window.location.reload();
+        }
+        }, 800);
+    });
+</script>
 </body>
-</html>
