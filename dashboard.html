@@ -44,7 +44,6 @@
         .star-icon { cursor: pointer; font-size: 1.2rem; color: #475569; transition: 0.2s; }
         .star-icon.active { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
         
-        /* STILE PER LA STELLINA FILTRO NELL'HEADER */
         .header-star { font-size: 1.3rem; cursor: pointer; color: #475569; margin-top: 5px; }
         .header-star.active { color: #fbbf24; }
     </style>
@@ -74,14 +73,14 @@
         <table id="mainTable">
             <thead>
                 <tr>
-                    <th onclick="handleSort(0)"><div class="th-content">TICKER <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(1)"><div class="th-content">MARKET <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(2)"><div class="th-content">SECTOR <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(3)"><div class="th-content">INDUSTRY <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(4)"><div class="th-content">PRICE <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(5)"><div class="th-content">TREND W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(6)"><div class="th-content">FLIP W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
-                    <th onclick="handleSort(7)"><div class="th-content">VAR % W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()"></div></th>
+                    <th onclick="handleSort(0)"><div class="th-content">TICKER <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(1)"><div class="th-content">MARKET <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(2)"><div class="th-content">SECTOR <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(3)"><div class="th-content">INDUSTRY <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(4)"><div class="th-content">PRICE <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(5)"><div class="th-content">TREND W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(6)"><div class="th-content">FLIP W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(7)"><div class="th-content">VAR % W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
                     <th style="text-align:center;">
                         <div class="th-content">
                             WATCHLIST 
@@ -155,7 +154,7 @@
         }
 
         function toggleWatchlistFilter(event) {
-            event.stopPropagation(); // Evita il sort quando clicchi la stella
+            event.stopPropagation();
             watchlistOnly = !watchlistOnly;
             document.getElementById('masterStar').classList.toggle('active', watchlistOnly);
             filterTable();
@@ -166,9 +165,7 @@
             const rows = document.getElementById("tableBody").rows;
             for (let row of rows) {
                 let show = true;
-                // Filtro Watchlist
                 if (watchlistOnly && row.cells[8].getAttribute('data-fav') !== '1') show = false;
-                // Filtri Testuali
                 if (show) {
                     for (let i = 0; i < inputs.length; i++) {
                         let f = inputs[i].value.toUpperCase();
@@ -189,7 +186,7 @@
             rows.sort((a, b) => {
                 let x = a.cells[n].innerText.toUpperCase().replace('%','').replace(',','.');
                 let y = b.cells[n].innerText.toUpperCase().replace('%','').replace(',','.');
-                if (n === 8) { // Sort speciale per la colonna preferiti
+                if (n === 8) {
                     x = a.cells[n].getAttribute('data-fav');
                     y = b.cells[n].getAttribute('data-fav');
                 }
