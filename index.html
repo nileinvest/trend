@@ -21,75 +21,85 @@
             padding: 0; 
         }
 
-        /* HERO - Sfondo rimosso da qui per far vedere quello principale del body */
+        /* HERO SECTION */
         .hero-section {
             position: relative;
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            border-bottom: 1px solid #1e293b;
-            padding: 60px 20px;
+            padding: 80px 20px;
         }
 
-        /* STILE UNICO PER ENTRAMBI I TITOLI */
+        /* TITOLO PRINCIPALE */
         .hero-title { 
             font-size: 4.5rem; 
             font-weight: 900; 
             color: #38bdf8; 
-            margin: 10px 0; 
+            margin: 0; 
             text-shadow: 0 0 30px rgba(56, 189, 248, 0.4); 
             text-transform: uppercase; 
             letter-spacing: 5px; 
             line-height: 1.1;
         }
 
-        /* STILE LISTA CON EMOJI */
+        /* SOTTOTITOLO (Grande la metà, non tutto maiuscolo) */
+        .hero-subtitle {
+            font-size: 2.25rem; 
+            font-weight: 800;
+            color: #38bdf8;
+            margin: 10px 0 40px 0;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            text-transform: none; /* mixed case */
+            letter-spacing: 2px;
+        }
+
+        /* LISTA FEATURES CENTRATA */
         .hero-features-list {
-            margin-top: 40px;
-            text-align: left;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 30px 40px;
-            border-radius: 12px;
-            border: 1px solid #1e293b;
-            max-width: 800px;
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 900px;
         }
 
         .hero-features-list p {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             color: #cbd5e1;
-            margin: 15px 0;
+            margin: 12px 0;
             display: flex;
             align-items: center;
-            gap: 15px;
-            line-height: 1.5;
+            justify-content: center; /* Centratura orizzontale */
+            gap: 12px;
+            line-height: 1.4;
         }
 
-        /* GRUPPO PULSANTI */
+        /* PULSANTI (Stile pieno e grandi) */
         .button-group {
             display: flex;
-            gap: 20px;
-            margin-top: 50px;
+            gap: 25px;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        .btn-login {
-            background: #2563eb; color: white; padding: 20px 60px; font-size: 1.5rem; font-weight: bold;
-            border-radius: 12px; text-decoration: none; transition: 0.3s;
-            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.5); text-transform: uppercase;
+        .btn-nile {
+            background: #2563eb; 
+            color: white; 
+            padding: 25px 80px; 
+            font-size: 1.8rem; 
+            font-weight: bold;
+            border-radius: 15px; 
+            text-decoration: none; 
+            transition: 0.3s;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.5); 
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
         }
-        .btn-login:hover { transform: scale(1.05); background: #1d4ed8; }
+        .btn-nile:hover { transform: scale(1.05); background: #1d4ed8; }
 
-        .btn-signup {
-            background: transparent; color: #38bdf8; padding: 20px 60px; font-size: 1.5rem; font-weight: bold;
-            border-radius: 12px; text-decoration: none; transition: 0.3s;
-            border: 2px solid #38bdf8; text-transform: uppercase;
-        }
-        .btn-signup:hover { transform: scale(1.05); background: rgba(56, 189, 248, 0.1); }
-
-
-        /* SEZIONI FEATURES INVARIATE */
+        /* SEZIONI FEATURES */
         .features-container { max-width: 1400px; margin: 0 auto; padding: 120px 20px; }
         .feature-row { display: flex; align-items: center; gap: 100px; margin-bottom: 200px; }
         .feature-row:nth-child(even) { flex-direction: row-reverse; }
@@ -99,24 +109,33 @@
         .feature-image { flex: 2; } 
         .feature-image img { width: 100%; height: auto; border-radius: 20px; border: 3px solid #334155; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
 
+        /* CTA FINALE (Penultima posizione) */
+        .bottom-cta {
+            padding: 100px 20px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
         /* DISCLAIMER A FONDO PAGINA */
         .footer-disclaimer {
             text-align: center;
             padding: 60px 20px;
             border-top: 1px solid #1e293b;
-            background: rgba(11, 15, 26, 0.8);
+            background: #0b0f1a;
         }
 
         .disclaimer-box {
             max-width: 1000px; margin: 0 auto; font-size: 0.95rem; color: #94a3b8;
             background: rgba(15, 23, 42, 0.6); padding: 30px; border-radius: 12px; border: 1px solid #1e293b;
+            line-height: 1.6;
         }
 
         @media (max-width: 1024px) {
-            .feature-row, .feature-row:nth-child(even) { flex-direction: column; text-align: center; }
-            .hero-title { font-size: 2.8rem; }
-            .button-group { flex-direction: column; width: 100%; max-width: 400px; }
-            .btn-login, .btn-signup { text-align: center; width: 100%; padding: 20px 0; }
+            .feature-row, .feature-row:nth-child(even) { flex-direction: column; text-align: center; gap: 40px; }
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.6rem; }
+            .button-group { flex-direction: column; align-items: center; }
+            .btn-nile { width: 80%; padding: 20px 0; font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -124,18 +143,18 @@
 
     <div class="hero-section">
         <h1 class="hero-title">NILE - Follow the Trend</h1>
-        <h2 class="hero-title">Market Analytics & Trend Signal</h2>
+        <h2 class="hero-subtitle">Market Analytics & Trend Signal</h2>
 
         <div class="hero-features-list">
             <p><span>📝</span> Back-tested strategies with clear entry and exit rules. No guesswork, no emotions, just execution.</p>
             <p><span>🌊</span> One mechanical trend following system that works across any liquid market.</p>
             <p><span>👥</span> Direct support: lucadiberlino@gmail.com</p>
-            <p><span>🟢</span> Proven in Bull & Bear markets</p>
+            <p><span>✅</span> Proven in Bull & Bear markets</p>
         </div>
 
         <div class="button-group">
-            <a class="btn-login" href="#" data-ms-modal="login">LOG IN</a>
-            <a class="btn-signup" href="#" data-ms-modal="signup">SIGN UP</a>
+            <a class="btn-nile" href="#" data-ms-modal="login">LOG IN</a>
+            <a class="btn-nile" href="#" data-ms-modal="signup">SIGN UP</a>
         </div>
     </div>
 
@@ -162,6 +181,14 @@
                 <h2>Advanced Sorting</h2>
                 <p>Filter the market like a pro. Every column is fully interactive: sort by trend, sector, or performance to find the highest probability setups in seconds.</p>
             </div>
+        </div>
+    </div>
+
+    <div class="bottom-cta">
+        <h2 style="color: #f8fafc; font-size: 2.5rem; margin-bottom: 40px;">Ready to follow the trend?</h2>
+        <div class="button-group">
+            <a class="btn-nile" href="#" data-ms-modal="login">LOG IN</a>
+            <a class="btn-nile" href="#" data-ms-modal="signup">SIGN UP</a>
         </div>
     </div>
 
