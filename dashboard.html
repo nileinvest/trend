@@ -46,6 +46,54 @@
         
         .header-star { font-size: 1.3rem; cursor: pointer; color: #475569; margin-top: 5px; }
         .header-star.active { color: #fbbf24; }
+
+        /* NUOVI STILI PER INFO E MODALE */
+        .info-btn {
+            display: inline-block;
+            margin-left: 5px;
+            background: #334155;
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            cursor: help;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .info-btn:hover { background: #38bdf8; color: #0f172a; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #38bdf8;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .modal-title { color: #38bdf8; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+        .modal-text { color: #cbd5e1; line-height: 1.6; margin-bottom: 25px; }
+        .close-btn {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -86,10 +134,30 @@
                         </div>
                     </th>
                     <th onclick="handleSort(1)"><div class="th-content">TICKER <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(2)"><div class="th-content">TREND W <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(3)"><div class="th-content">VAR % SINCE FLIP <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(4)"><div class="th-content">TIME SINCE FLIP <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(5)"><div class="th-content">PRICE <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(2)">
+                        <div class="th-content">
+                            <div>TREND W <span class="info-btn" onclick="showInfo(event, 'TREND W', 'Indicates if the medium-term trend is positive or negative.')">info</span></div>
+                            <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
+                        </div>
+                    </th>
+                    <th onclick="handleSort(3)">
+                        <div class="th-content">
+                            <div>VAR % SINCE FLIP <span class="info-btn" onclick="showInfo(event, 'VAR % SINCE FLIP', 'Indicates the percentage change in price since the day the trend changed direction.')">info</span></div>
+                            <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
+                        </div>
+                    </th>
+                    <th onclick="handleSort(4)">
+                        <div class="th-content">
+                            <div>TIME SINCE FLIP <span class="info-btn" onclick="showInfo(event, 'TIME SINCE FLIP', 'Indicates how many days have passed since the date the trend changed direction.')">info</span></div>
+                            <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
+                        </div>
+                    </th>
+                    <th onclick="handleSort(5)">
+                        <div class="th-content">
+                            <div>PRICE <span class="info-btn" onclick="showInfo(event, 'PRICE', 'Indicates the current price of the asset (the value may not correspond to the real-time value).')">info</span></div>
+                            <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
+                        </div>
+                    </th>
                     <th onclick="handleSort(6)"><div class="th-content">MARKET <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
                     <th onclick="handleSort(7)"><div class="th-content">SECTOR <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
                     <th onclick="handleSort(8)"><div class="th-content">INDUSTRY <input type="text" class="filter-input" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
@@ -99,11 +167,31 @@
         </table>
     </div>
 
+    <div id="infoModal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="modalTitle" class="modal-title">TITLE</div>
+            <div id="modalText" class="modal-text">Description goes here...</div>
+            <button class="close-btn" onclick="closeInfo()">CLOSE</button>
+        </div>
+    </div>
+
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
         let favorites = JSON.parse(localStorage.getItem('myWatchlist')) || [];
         let watchlistOnly = false;
         let sortDirection = {};
+
+        // Funzioni per la modale info
+        function showInfo(event, title, text) {
+            event.stopPropagation(); // Evita che la colonna venga ordinata quando clicchi info
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeInfo() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
 
         async function update() {
             try {
