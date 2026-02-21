@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - NILEinvest</title>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; line-height: 1.6; margin: 0; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #334155; }
+        h1 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        h2 { color: #f8fafc; margin-top: 30px; font-size: 1.2rem; }
+        p, li { color: #94a3b8; font-size: 0.95rem; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #38bdf8; text-decoration: none; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+        .highlight { color: #f87171; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Torna alla Home</a>
+        <h1>Termini di Servizio</h1>
+        <p>Ultimo aggiornamento: Febbraio 2026</p>
+
+        <h2>1. Natura del Servizio</h2>
+        <p>NILEinvest è una piattaforma di analisi e monitoraggio statistico dei trend di mercato. <span class="highlight">I contenuti forniti non costituiscono, in alcun modo, consulenza finanziaria, sollecitazione al pubblico risparmio o suggerimento di investimento.</span></p>
+
+        <h2>2. Esclusione di Responsabilità (Disclaimer)</h2>
+        <p>L'utente riconosce che l'utilizzo dei dati avviene a proprio rischio. NILEinvest non garantisce l'accuratezza o la completezza delle informazioni estratte dai fogli di calcolo. Non siamo responsabili per eventuali perdite finanziarie derivanti dall'uso delle informazioni presenti sul sito.</p>
+
+        <h2>3. Registrazione e Account</h2>
+        <p>L'accesso alla Dashboard è riservato agli utenti registrati tramite Memberstack. L'utente è responsabile della riservatezza delle proprie credenziali.</p>
+
+        <h2>4. Proprietà Intellettuale</h2>
+        <p>Il design, il logo NILEinvest™ e gli algoritmi di visualizzazione dei dati sono di proprietà esclusiva di NILEinvest.</p>
+
+        <h2>5. Legge Applicabile</h2>
+        <p>Questi termini sono regolati dalla legge italiana. Per qualsiasi controversia è competente il Foro del luogo di residenza o domicilio del titolare del sito.</p>
+    </div>
+</body>
+</html>
