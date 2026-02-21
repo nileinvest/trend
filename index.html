@@ -112,17 +112,37 @@
             background: rgba(15, 23, 42, 0.4);
         }
 
-        .footer-disclaimer {
-            text-align: center;
+        /* --- NUOVO FOOTER --- */
+        .footer {
             padding: 60px 20px;
             border-top: 1px solid #1e293b;
             background: #0b0f1a;
+            text-align: center;
         }
 
-        .disclaimer-box {
-            max-width: 1000px; margin: 0 auto; font-size: 0.95rem; color: #94a3b8;
-            background: rgba(15, 23, 42, 0.6); padding: 30px; border-radius: 12px; border: 1px solid #1e293b;
-            line-height: 1.6;
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #38bdf8;
+        }
+
+        .copyright {
+            color: #475569;
+            font-size: 0.85rem;
+            margin-top: 10px;
         }
 
         @media (max-width: 1024px) {
@@ -188,14 +208,17 @@
         </div>
     </div>
 
-    <div class="footer-disclaimer">
-        <div class="disclaimer-box">
-            <strong>IMPORTANT DISCLAIMER:</strong><br><br>
-            The trend indicators provided on this platform are strictly for analytical purposes to monitor asset trends. 
-            They do not constitute financial advice, investment recommendations, or solicitations to buy or sell any assets. 
-            Trading involves significant risk.
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="disclaimer.html">Disclaimer</a>
         </div>
-    </div>
+        <div class="copyright">
+            © 2026 NILEinvest™. All rights reserved.
+        </div>
+    </footer>
 
 </body>
 </html>
