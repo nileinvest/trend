@@ -112,37 +112,17 @@
             background: rgba(15, 23, 42, 0.4);
         }
 
-        /* --- NUOVO FOOTER --- */
-        .footer {
+        .footer-disclaimer {
+            text-align: center;
             padding: 60px 20px;
             border-top: 1px solid #1e293b;
             background: #0b0f1a;
-            text-align: center;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #38bdf8;
-        }
-
-        .copyright {
-            color: #475569;
-            font-size: 0.85rem;
-            margin-top: 10px;
+        .disclaimer-box {
+            max-width: 1000px; margin: 0 auto; font-size: 0.95rem; color: #94a3b8;
+            background: rgba(15, 23, 42, 0.6); padding: 30px; border-radius: 12px; border: 1px solid #1e293b;
+            line-height: 1.6;
         }
 
         @media (max-width: 1024px) {
@@ -198,6 +178,14 @@
                 <p>Filter the market like a pro. Every column is fully interactive: sort by trend, sector, or performance to find the highest probability setups in seconds.</p>
             </div>
         </div>
+
+        <div class="feature-row">
+            <div class="feature-image"><img src="industry analytics.png" alt="Industry Analytics"></div>
+            <div class="feature-text">
+                <h2>Industry Analytics</h2>
+                <p>Deep dive into market health. Access aggregate statistics for <strong>Stocks</strong> and <strong>Cryptocurrencies</strong> to identify leading sectors and global trend strength at a glance.</p>
+            </div>
+        </div>
     </div>
 
     <div class="bottom-cta">
@@ -208,17 +196,14 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="footer-links">
-            <a href="contact.html">Contact</a>
-            <a href="terms.html">Terms of Service</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="disclaimer.html">Disclaimer</a>
+    <div class="footer-disclaimer">
+        <div class="disclaimer-box">
+            <strong>IMPORTANT DISCLAIMER:</strong><br><br>
+            The trend indicators provided on this platform are strictly for analytical purposes to monitor asset trends. 
+            They do not constitute financial advice, investment recommendations, or solicitations to buy or sell any assets. 
+            Trading involves significant risk.
         </div>
-        <div class="copyright">
-            © 2026 NILEinvest™. All rights reserved.
-        </div>
-    </footer>
+    </div>
 
 </body>
 </html>
