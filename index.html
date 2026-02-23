@@ -1,41 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - NILEinvest</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>">
+    
+    <title>NILE - Follow the Trend</title>
+
+    <script data-memberstack-app="app_cmlf9re4g00u40ss19rl32mj9" src="https://static.memberstack.com/scripts/v2/memberstack.js" type="text/javascript"></script>
+
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .container { text-align: center; background: #1e293b; padding: 60px; border-radius: 12px; border: 1px solid #334155; max-width: 500px; width: 90%; }
-        h1 { color: #38bdf8; font-size: 2rem; margin-bottom: 10px; }
-        p { color: #94a3b8; margin-bottom: 30px; }
-        .email-link { 
-            display: inline-block; 
-            color: #ffffff; 
-            background: #2563eb; 
-            padding: 15px 30px; 
-            border-radius: 8px; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 1.1rem;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        body { 
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                        url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #e2e8f0; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding: 0; 
         }
-        .email-link:hover { background: #1d4ed8; transform: translateY(-2px); }
-        .back-link { display: block; margin-top: 30px; color: #64748b; text-decoration: none; font-size: 0.9rem; }
-        .back-link:hover { color: #38bdf8; }
+
+        .hero-section {
+            position: relative;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            padding: 40px 20px 80px 20px;
+        }
+
+        .hero-title { 
+            font-size: 4.5rem; 
+            font-weight: 900; 
+            color: #38bdf8; 
+            margin: 0; 
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.4); 
+            text-transform: uppercase; 
+            letter-spacing: 5px; 
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 2.25rem; 
+            font-weight: 800;
+            color: #38bdf8;
+            margin: 10px 0 40px 0;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            text-transform: none; 
+            letter-spacing: 2px;
+        }
+
+        .hero-features-list {
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .hero-features-list p {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            gap: 12px;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn-nile {
+            background: #2563eb; 
+            color: white; 
+            padding: 25px 80px; 
+            font-size: 1.8rem; 
+            font-weight: bold;
+            border-radius: 15px; 
+            text-decoration: none; 
+            transition: 0.3s;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.5); 
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .btn-nile:hover { transform: scale(1.05); background: #1d4ed8; }
+
+        .features-container { max-width: 1400px; margin: 0 auto; padding: 120px 20px; }
+        .feature-row { display: flex; align-items: center; gap: 100px; margin-bottom: 200px; }
+        .feature-row:nth-child(even) { flex-direction: row-reverse; }
+        .feature-text { flex: 1; }
+        .feature-text h2 { font-size: 3rem; color: #f8fafc; margin-bottom: 25px; border-left: 6px solid #2563eb; padding-left: 20px; }
+        .feature-text p { font-size: 1.4rem; color: #cbd5e1; line-height: 1.8; }
+        .feature-image { flex: 2; } 
+        .feature-image img { width: 100%; height: auto; border-radius: 20px; border: 3px solid #334155; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+
+        .bottom-cta {
+            padding: 100px 20px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        /* --- NUOVO FOOTER --- */
+        .footer {
+            padding: 60px 20px;
+            border-top: 1px solid #1e293b;
+            background: #0b0f1a;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #38bdf8;
+        }
+
+        .copyright {
+            color: #475569;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .feature-row, .feature-row:nth-child(even) { flex-direction: column; text-align: center; gap: 40px; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-subtitle { font-size: 1.4rem; }
+            .hero-features-list p { white-space: normal; font-size: 1.1rem; }
+            .button-group { flex-direction: column; align-items: center; }
+            .btn-nile { width: 80%; padding: 20px 0; font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Contact Us</h1>
-        <p>Have questions or need technical support? Send us an email and we will get back to you as soon as possible.</p>
-        
-        <a href="mailto:nileinvest.support@proton.me" class="email-link">
-            nileinvest.support@proton.me
-        </a>
 
-        <a href="index.html" class="back-link">← Back to Home</a>
+    <div class="hero-section">
+        <h1 class="hero-title">🌊 NILE - Follow the Trend</h1>
+        <h2 class="hero-subtitle">Market Analytics & Trend Signal</h2>
+
+        <div class="hero-features-list">
+            <p><span>📝</span> Back-tested strategies with clear entry and exit rules. No guesswork, no emotions, just execution.</p>
+            <p><span>🌊</span> One mechanical trend following system that works across any liquid market.</p>
+            <p><span>👥</span> Direct support: nileinvest.support@proton.me</p>
+            <p><span>✅</span> Proven in Bull & Bear markets</p>
+        </div>
+
+        <div class="button-group">
+            <a class="btn-nile" href="#" data-ms-modal="login">LOG IN</a>
+            <a class="btn-nile" href="#" data-ms-modal="signup">SIGN UP</a>
+        </div>
     </div>
+
+    <div class="features-container">
+        <div class="feature-row">
+            <div class="feature-image"><img src="update.png" alt="Auto Update"></div>
+            <div class="feature-text">
+                <h2>Real-Time Auto Update</h2>
+                <p>Stay ahead of the market. The dashboard performs a mandatory data refresh upon every login and a full global synchronization daily at <strong>04:00 AM (CET)</strong>.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image"><img src="favorites.png" alt="Watchlist"></div>
+            <div class="feature-text">
+                <h2>Smart Watchlist</h2>
+                <p>Customize your experience. Select your favorite assets to monitor and use the <strong>one-click filter</strong> to hide everything else and focus on your portfolio.</p>
+            </div>
+        </div>
+
+        <div class="feature-row">
+            <div class="feature-image"><img src="filter.png" alt="Sorting"></div>
+            <div class="feature-text">
+                <h2>Advanced Sorting</h2>
+                <p>Filter the market like a pro. Every column is fully interactive: sort by trend, sector, or performance to find the highest probability setups in seconds.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-cta">
+        <h2 style="color: #f8fafc; font-size: 2.5rem; margin-bottom: 40px;">Ready to follow the trend?</h2>
+        <div class="button-group">
+            <a class="btn-nile" href="#" data-ms-modal="login">LOG IN</a>
+            <a class="btn-nile" href="#" data-ms-modal="signup">SIGN UP</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="disclaimer.html">Disclaimer</a>
+        </div>
+        <div class="copyright">
+            © 2026 NILEinvest™. All rights reserved.
+        </div>
+    </footer>
+
 </body>
 </html>
