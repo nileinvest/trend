@@ -21,6 +21,7 @@
             font-family: 'Inter', sans-serif; 
             margin: 0; 
             padding: 0; 
+            overflow-x: hidden; /* Evita lo scroll orizzontale */
         }
 
         .hero-section {
@@ -70,7 +71,7 @@
             justify-content: center; 
             gap: 12px;
             line-height: 1.4;
-            white-space: nowrap;
+            white-space: nowrap; /* Questo causava problemi su mobile */
         }
 
         .button-group {
@@ -104,6 +105,7 @@
             border-radius: 15px;
             border: 1px solid #334155;
             max-width: 600px;
+            box-sizing: border-box; /* Assicura che il padding non sballi la larghezza */
         }
 
         .payment-text {
@@ -150,6 +152,7 @@
             color: #38bdf8;
             font-size: 1.1rem;
             border: 1px dashed #38bdf8;
+            word-break: break-all; /* Fondamentale per far andare a capo l'IBAN su schermi stretti */
         }
 
         .features-container { max-width: 1400px; margin: 0 auto; padding: 120px 20px; }
@@ -174,36 +177,59 @@
             text-align: center;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-
-        .footer-links a:hover { color: #38bdf8; }
-
-        .copyright {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 1024px) {
-            .feature-row, .feature-row:nth-child(even) { flex-direction: column; text-align: center; gap: 40px; }
-            .hero-title { font-size: 2.8rem; }
-            .hero-subtitle { font-size: 1.4rem; }
-            .hero-features-list p { white-space: normal; font-size: 1.1rem; }
-            .button-group { flex-direction: column; align-items: center; }
-            .btn-nile { width: 80%; padding: 20px 0; font-size: 1.4rem; }
+        /* --- MEDIA QUERIES AGGIORNATE PER MOBILE --- */
+        @media (max-width: 768px) {
+            .hero-title { 
+                font-size: 2.2rem; 
+                letter-spacing: 2px; 
+            }
+            .hero-subtitle { 
+                font-size: 1.2rem; 
+            }
+            .hero-features-list p { 
+                white-space: normal; 
+                font-size: 1rem; 
+                text-align: left;
+                align-items: flex-start;
+                padding: 0 10px;
+            }
+            .button-group { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 15px;
+            }
+            .btn-nile { 
+                width: 100%; 
+                max-width: 280px;
+                padding: 18px 0; 
+                font-size: 1.2rem; 
+            }
+            .payment-container {
+                width: 100%;
+                margin: 30px auto;
+            }
+            .method-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-method {
+                width: 100%;
+            }
+            .features-container {
+                padding: 60px 20px;
+            }
+            .feature-row, .feature-row:nth-child(even) { 
+                flex-direction: column; 
+                text-align: center; 
+                gap: 30px; 
+                margin-bottom: 80px;
+            }
+            .feature-text h2 {
+                font-size: 1.8rem;
+            }
+            .feature-text p {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
