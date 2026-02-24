@@ -21,7 +21,7 @@
             font-family: 'Inter', sans-serif; 
             margin: 0; 
             padding: 0; 
-            overflow-x: hidden; /* Evita lo scroll orizzontale */
+            overflow-x: hidden;
         }
 
         .hero-section {
@@ -71,7 +71,7 @@
             justify-content: center; 
             gap: 12px;
             line-height: 1.4;
-            white-space: nowrap; /* Questo causava problemi su mobile */
+            white-space: nowrap;
         }
 
         .button-group {
@@ -105,7 +105,7 @@
             border-radius: 15px;
             border: 1px solid #334155;
             max-width: 600px;
-            box-sizing: border-box; /* Assicura che il padding non sballi la larghezza */
+            box-sizing: border-box;
         }
 
         .payment-text {
@@ -152,7 +152,7 @@
             color: #38bdf8;
             font-size: 1.1rem;
             border: 1px dashed #38bdf8;
-            word-break: break-all; /* Fondamentale per far andare a capo l'IBAN su schermi stretti */
+            word-break: break-all;
         }
 
         .features-container { max-width: 1400px; margin: 0 auto; padding: 120px 20px; }
@@ -177,7 +177,31 @@
             text-align: center;
         }
 
-        /* --- MEDIA QUERIES AGGIORNATE PER MOBILE --- */
+        /* STILE FOOTER RIPRISTINATO */
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* Permette di andare a capo su mobile */
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            padding: 5px; /* Aggiunto un piccolo padding per facilitare il tocco su mobile */
+        }
+
+        .footer-links a:hover { color: #38bdf8; }
+
+        .copyright {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 40px;
+        }
+
         @media (max-width: 768px) {
             .hero-title { 
                 font-size: 2.2rem; 
@@ -229,6 +253,10 @@
             }
             .feature-text p {
                 font-size: 1.1rem;
+            }
+            /* Aggiunto un piccolo gap extra per il footer su mobile */
+            .footer-links {
+                gap: 20px;
             }
         }
     </style>
