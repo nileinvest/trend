@@ -301,7 +301,7 @@
             
             // Anti-cache: aggiunge un timestamp per forzare il caricamento dell'immagine più recente
             const timestamp = new Date().getTime();
-            img.src = `${ticker}.png?v=${timestamp}`;
+            img.src = `charts/${ticker}.png?v=${timestamp}`;
             
             tickerText.innerText = ticker + " - TREND ANALYSIS";
             modal.style.display = 'flex';
@@ -434,4 +434,3 @@
     </script>
 </body>
 </html>
-
