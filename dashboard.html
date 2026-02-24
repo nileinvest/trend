@@ -66,10 +66,18 @@
             font-size: 0.65rem; cursor: help; font-weight: bold; text-transform: uppercase;
         }
 
-        /* MODALI */
+        /* MODALI ORIGINALI */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #38bdf8; text-align: center; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
+        /* NUOVO MODALE PER IMMAGINI TREND (ANTI-CACHE) */
+        .modal-chart-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-chart-content { background: #1e293b; padding: 10px; border-radius: 12px; border: 1px solid #38bdf8; position: relative; max-width: 95%; max-height: 95%; text-align: center; }
+        .modal-chart-content img { max-width: 100%; max-height: 85vh; border-radius: 8px; display: block; border: 1px solid #334155; }
+        .close-chart { position: absolute; top: -35px; right: 0; color: #e2e8f0; font-size: 28px; cursor: pointer; font-weight: bold; }
+        .chart-icon { margin-left: 8px; cursor: pointer; color: #94a3b8; transition: 0.2s; vertical-align: middle; font-size: 1.1rem; }
+        .chart-icon:hover { color: #38bdf8; transform: scale(1.2); }
+
         /* STILE FILTRI MOBILE NEL MODALE */
         .mobile-filters-list { text-align: left; display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
         .mobile-filter-item { display: flex; flex-direction: column; gap: 5px; }
@@ -199,6 +207,14 @@
         </div>
     </div>
 
+    <div id="chartModal" class="modal-chart-overlay" onclick="closeChart()">
+        <div class="modal-chart-content" onclick="event.stopPropagation()">
+            <span class="close-chart" onclick="closeChart()">✕</span>
+            <img id="modalChartImg" src="" alt="Chart Trend">
+            <div id="modalChartTicker" style="text-align:center; color:#38bdf8; margin-top:10px; font-weight:bold; font-size:1rem; text-transform:uppercase;"></div>
+        </div>
+    </div>
+
     <div id="mobileFilterModal" class="modal-overlay">
         <div class="modal-content" style="width: 85%; max-width: 400px;">
             <h3 style="color:#38bdf8; margin-top:0;">FILTER ASSETS</h3>
@@ -277,6 +293,24 @@
             document.getElementById('explanationModal').style.display = 'none';
         }
 
+        // FUNZIONI PER IL MODALE DEI GRAFICI
+        function openChart(ticker) {
+            const modal = document.getElementById('chartModal');
+            const img = document.getElementById('modalChartImg');
+            const tickerText = document.getElementById('modalChartTicker');
+            
+            // Anti-cache: aggiunge un timestamp per forzare il caricamento dell'immagine più recente
+            const timestamp = new Date().getTime();
+            img.src = `${ticker}.png?v=${timestamp}`;
+            
+            tickerText.innerText = ticker + " - TREND ANALYSIS";
+            modal.style.display = 'flex';
+        }
+
+        function closeChart() {
+            document.getElementById('chartModal').style.display = 'none';
+        }
+
         async function update() {
             try {
                 const res = await fetch(csvUrl + '&nocache=' + Date.now());
@@ -302,7 +336,10 @@
                             <span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${c[0]}',this)">★</span>
                         </td>
                         <td data-label="TICKER" style="font-weight:bold; color:#38bdf8;">${c[0]}</td>
-                        <td data-label="TREND W"><span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span></td>
+                        <td data-label="TREND W">
+                            <span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span>
+                            <span class="chart-icon" onclick="openChart('${c[0]}')" title="View Trend Chart">📈</span>
+                        </td>
                         <td data-label="VAR %" class="${varWNum>0?'pos-var':varWNum<0?'neg-var':''}">${varWStr}</td>
                         <td data-label="TIME">${c[6]}</td>
                         <td data-label="PRICE">${c[14]}</td>
