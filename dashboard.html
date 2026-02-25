@@ -293,16 +293,12 @@
             document.getElementById('explanationModal').style.display = 'none';
         }
 
-        // FUNZIONI PER IL MODALE DEI GRAFICI
         function openChart(ticker) {
             const modal = document.getElementById('chartModal');
             const img = document.getElementById('modalChartImg');
             const tickerText = document.getElementById('modalChartTicker');
-            
-            // Anti-cache: aggiunge un timestamp per forzare il caricamento dell'immagine più recente
             const timestamp = new Date().getTime();
             img.src = `charts/${ticker}.png?v=${timestamp}`;
-            
             tickerText.innerText = ticker + " - TREND ANALYSIS";
             modal.style.display = 'flex';
         }
@@ -313,43 +309,51 @@
 
         async function update() {
             try {
-                const res = await fetch(csvUrl + '&nocache=' + Date.now());
+                // Rimosso nocache per caricamento immediato dai server Google
+                const res = await fetch(csvUrl);
                 const text = await res.text();
                 const sep = text.includes(';') ? ';' : ',';
                 const lines = text.split(/\r?\n/);
                 const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
+                
+                // --- OTTIMIZZAZIONE INNERHTML INJECTION ---
+                let rowsHTML = ''; 
 
                 lines.forEach((line, index) => {
                     if (index === 0 || !line) return;
                     const c = parseCSVLine(line, sep);
                     if (!c[0]) return;
 
-                    const tr = document.createElement('tr');
                     const isFav = favorites.includes(c[0]);
                     const trendW = c[4] || "";
                     const varWStr = c[15] || "0%";
                     const varWNum = parseFloat(varWStr.replace(',','.').replace('%',''));
 
-                    tr.innerHTML = `
-                        <td data-label="WATCHLIST" style="text-align:center;" data-fav="${isFav?'1':'0'}">
-                            <span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${c[0]}',this)">★</span>
-                        </td>
-                        <td data-label="TICKER" style="font-weight:bold; color:#38bdf8;">${c[0]}</td>
-                        <td data-label="TREND W">
-                            <span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span>
-                            <span class="chart-icon" onclick="openChart('${c[0]}')" title="View Trend Chart">📊</span>
-                        </td>
-                        <td data-label="VAR %" class="${varWNum>0?'pos-var':varWNum<0?'neg-var':''}">${varWStr}</td>
-                        <td data-label="TIME">${c[6]}</td>
-                        <td data-label="PRICE">${c[14]}</td>
-                        <td data-label="MARKET">${c[1]}</td>
-                        <td data-label="SECTOR">${c[17]}</td>
-                        <td data-label="INDUSTRY">${c[18]}</td>
+                    // Creazione della riga come stringa (più veloce di appendChild nel loop)
+                    rowsHTML += `
+                        <tr>
+                            <td data-label="WATCHLIST" style="text-align:center;" data-fav="${isFav?'1':'0'}">
+                                <span class="star-icon ${isFav?'active':''}" onclick="toggleFavorite('${c[0]}',this)">★</span>
+                            </td>
+                            <td data-label="TICKER" style="font-weight:bold; color:#38bdf8;">${c[0]}</td>
+                            <td data-label="TREND W">
+                                <span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span>
+                                <span class="chart-icon" onclick="openChart('${c[0]}')" title="View Trend Chart">📊</span>
+                            </td>
+                            <td data-label="VAR %" class="${varWNum>0?'pos-var':varWNum<0?'neg-var':''}">${varWStr}</td>
+                            <td data-label="TIME">${c[6]}</td>
+                            <td data-label="PRICE">${c[14]}</td>
+                            <td data-label="MARKET">${c[1]}</td>
+                            <td data-label="SECTOR">${c[17]}</td>
+                            <td data-label="INDUSTRY">${c[18]}</td>
+                        </tr>
                     `;
-                    tbody.appendChild(tr);
                 });
+                
+                // Iniezione massiva finale
+                tbody.innerHTML = rowsHTML;
                 updateCounters();
+                
             } catch (e) { console.error(e); }
         }
 
@@ -415,7 +419,8 @@
             for (let row of rows) {
                 if (row.style.display !== "none") {
                     const trend = row.cells[2].innerText;
-                    const v = parseFloat(row.cells[3].innerText.replace(',','.'));
+                    const vText = row.cells[3].innerText.replace(',','.');
+                    const v = parseFloat(vText);
                     if (trend.includes("BUY")) {
                         buyCount++;
                         if (v > 0) green++; else if (v < 0) red++;
