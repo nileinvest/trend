@@ -364,8 +364,10 @@
                             </td>
                             <td data-label="TICKER" style="font-weight:bold; color:#38bdf8;">${c[0]}</td>
                             <td data-label="TREND W">
-                                <span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span>
-                                <span class="chart-icon" onclick="openChart('${c[0]}')" title="View Trend Chart">📊</span>
+                                <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-start; flex-wrap: nowrap;">
+                                    <span class="${trendW.includes('BUY')?'badge-buy':'badge-sell'}">${trendW}</span>
+                                    <span class="chart-icon" style="margin:0;" onclick="openChart('${c[0]}')" title="View Trend Chart">📊</span>
+                                </div>
                             </td>
                             <td data-label="VAR %" class="${varWNum>0?'pos-var':varWNum<0?'neg-var':''}">${varWStr}</td>
                             <td data-label="TIME">${c[6]}</td>
