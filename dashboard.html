@@ -381,18 +381,25 @@
                 });
 
                 tbody.innerHTML = htmlBuffer;
+                
+                // --- RIPRISTINO STATO FILTRI ---
+                restoreFilterState();
+                
                 updateCounters();
-                calculateBalance(); // Inizializza il calcolo bilancio
+                calculateBalance(); 
             } catch (e) { console.error(e); }
         }
 
         // Funzione calcolo automatico Bilancio
         function calculateBalance() {
-            const initial = parseFloat(document.getElementById('initialBalance').value);
+            const initialInput = document.getElementById('initialBalance');
+            const initial = parseFloat(initialInput.value);
             const display = document.getElementById('balanceBacktestValue');
             
+            // Salva il bilancio in localStorage
+            localStorage.setItem('nile_initialBalance', initialInput.value);
+
             if (!isNaN(initial)) {
-                // Calcolo: Initial * Somma Percentuali (es: 1000 * 0.15 se somma è 15%)
                 const result = initial * (totalBacktestSum / 100);
                 display.innerText = result.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             } else {
@@ -418,6 +425,10 @@
         function toggleWatchlistFilter(event) {
             if(event) event.stopPropagation();
             watchlistOnly = !watchlistOnly;
+            
+            // Salva stato watchlist
+            localStorage.setItem('nile_watchlistOnly', watchlistOnly);
+
             document.getElementById('masterStar').classList.toggle('active', watchlistOnly);
             document.getElementById('mobileMasterStar').classList.toggle('active', watchlistOnly);
             filterTable();
@@ -426,6 +437,11 @@
         function filterTable() {
             const inputs = document.getElementsByClassName("desktop-filter");
             const rows = document.getElementById("tableBody").rows;
+            
+            // Salva i valori dei filtri in localStorage
+            const filterValues = Array.from(inputs).map(i => i.value);
+            localStorage.setItem('nile_desktopFilters', JSON.stringify(filterValues));
+
             for (let row of rows) {
                 let show = true;
                 if (watchlistOnly && row.cells[0].getAttribute('data-fav') !== '1') show = false;
@@ -438,6 +454,35 @@
                 row.style.display = show ? "" : "none";
             }
             updateCounters();
+        }
+
+        // Funzione per ripristinare lo stato dei filtri al caricamento
+        function restoreFilterState() {
+            // 1. Ripristina Bilancio
+            const savedBalance = localStorage.getItem('nile_initialBalance');
+            if (savedBalance !== null) document.getElementById('initialBalance').value = savedBalance;
+
+            // 2. Ripristina Watchlist Toggle
+            const savedWatchlist = localStorage.getItem('nile_watchlistOnly') === 'true';
+            if (savedWatchlist) {
+                watchlistOnly = true;
+                document.getElementById('masterStar').classList.add('active');
+                document.getElementById('mobileMasterStar').classList.add('active');
+            }
+
+            // 3. Ripristina Filtri Desktop e Mobile
+            const savedFilters = JSON.parse(localStorage.getItem('nile_desktopFilters'));
+            if (savedFilters) {
+                const desktopInputs = document.querySelectorAll('.desktop-filter');
+                const mobileInputs = document.querySelectorAll('.mobile-filter');
+                savedFilters.forEach((val, idx) => {
+                    if (desktopInputs[idx]) desktopInputs[idx].value = val;
+                    if (mobileInputs[idx]) mobileInputs[idx].value = val;
+                });
+            }
+
+            // Applica effettivamente i filtri ripristinati
+            filterTable();
         }
 
         function handleSort(n) {
@@ -481,5 +526,3 @@
     </script>
 </body>
 </html>
-
-
