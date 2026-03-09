@@ -206,7 +206,7 @@
                     </th>
                     <th onclick="handleSort(6)">
                         <div class="th-content">
-                            <div class="title-wrapper">BACKTEST 01/01/20-12/01/26 <span class="info-btn" onclick="showExplanation(event, 'BACKTEST', 'Result of the backtest for the specified period, using the following strategy: Open a LONG position upon the BUY signal. Close the LONG position upon the SELL signal and open a SHORT position with a 10% Take Profit. Close the SHORT position upon a new BUY signal (if not already closed at the 10% profit target) and open a new LONG position. In this test, each position is opened with $10,000 (or a similar amount, depending on the cost of a single contract).')">info</span></div>
+                            <div class="title-wrapper">BACKTEST 01/01/20-12/01/26 <span class="info-btn" onclick="showExplanation(event, 'BACKTEST', 'Result of the backtest for the specified period, using the following strategy: Open a LONG position upon the BUY signal. Close the LONG position upon the SELL signal and open a SHORT position with a 10% Take Profit. Close the SHORT position upon a new BUY signal (if not already closed at the 10% profit target) and open a new LONG position. In this test, The profit percentage is calculated on an initial capital of $500,000. Each position is opened with $1,000 (or a similar amount, depending on the cost of a single contract).')">info</span></div>
                             <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
                         </div>
                     </th>
@@ -526,3 +526,4 @@
     </script>
 </body>
 </html>
+
