@@ -25,12 +25,25 @@
         .update-time { color: #22c55e; font-weight: bold; display: block; }
         button.logout-btn { background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 5px 15px; border-radius: 6px; cursor: pointer; }
 
-        .stats-container { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        /* MODIFICA QUI: Rimosso wrap e aggiunto overflow per sicurezza su schermi piccoli */
+        .stats-container { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+            flex-wrap: nowrap; 
+            align-items: stretch;
+        }
+        
+        /* MODIFICA QUI: Aggiunto flex: 1 per distribuire lo spazio e white-space per non rompere il testo */
         .stat-box { 
-            padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; 
+            padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; 
             border: 1px solid rgba(255,255,255,0.1); 
             display: flex; align-items: center; gap: 10px; 
+            white-space: nowrap;
+            flex: 1;
+            justify-content: center;
         }
+
         .bg-green { background: rgba(22, 163, 74, 0.2); color: #4ade80; }
         .bg-red { background: rgba(220, 38, 38, 0.2); color: #f87171; }
         .bg-blue { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8 !important; transition: 0.3s; }
@@ -39,7 +52,7 @@
 
         .balance-input {
             background: rgba(15, 23, 42, 0.5); border: 1px solid #38bdf8; color: #38bdf8;
-            padding: 4px 8px; border-radius: 4px; width: 100px; font-weight: bold; outline: none;
+            padding: 4px 8px; border-radius: 4px; width: 80px; font-weight: bold; outline: none;
         }
 
         /* PULSANTE FILTRO MOBILE */
@@ -112,8 +125,10 @@
             .header-left { width: 100%; justify-content: space-between; }
             .user-info { width: 100%; text-align: center; }
             .user-info div { justify-content: center !important; }
-            .stats-container { flex-direction: column; }
-            .stat-box { justify-content: space-between; }
+            
+            /* Su mobile manteniamo il comportamento a colonna originale */
+            .stats-container { flex-direction: column; flex-wrap: wrap; }
+            .stat-box { justify-content: space-between; flex: none; white-space: normal; }
 
             #mainTable thead { display: none; } 
             #mainTable, #mainTable tbody, #mainTable tr, #mainTable td { display: block; width: 100%; box-sizing: border-box; }
