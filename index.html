@@ -234,14 +234,11 @@
             .method-buttons {
                 flex-direction: column;
                 gap: 10px;
-                /* Aggiunto: assicura che i bottoni stiano nel contenitore */
                 width: 100%; 
             }
             .btn-method {
                 width: 100%;
-                /* Aggiunto: include padding e bordo nella larghezza totale */
                 box-sizing: border-box; 
-                /* Opzionale: riduce leggermente il padding laterale su mobile */
                 padding: 10px 15px; 
             }
             .features-container {
@@ -332,6 +329,14 @@
             </div>
         </div>
 
+        <div class="feature-row">
+            <div class="feature-image"><img src="operazioni.png" alt="Real Test"></div>
+            <div class="feature-text">
+                <h2>Real Test</h2>
+                <p>Open positions for real test</p>
+            </div>
+        </div>
+
         <div class="bottom-cta">
             <h2 style="color: #f8fafc; font-size: 2.5rem; margin-bottom: 40px;">Ready to follow the trend?</h2>
             <div class="button-group">
@@ -351,67 +356,68 @@
 
                 <div id="iban-bottom" class="iban-box">IBAN: LT33 3250 0057 2804 7064</div>
             </div>
-<style>
-    .partners-wrapper {
-        display: flex;
-        gap: 10px;
-        margin: 15px 0;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
 
-    .partner-card-mini {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(30, 41, 59, 0.5); /* Più scuro e trasparente */
-        border: 1px solid #334155;
-        border-radius: 6px;
-        padding: 6px 12px;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        min-width: 180px; /* Più stretto */
-    }
+            <style>
+                .partners-wrapper {
+                    display: flex;
+                    gap: 10px;
+                    margin: 15px 0;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
 
-    .partner-card-mini:hover {
-        background: #1e293b;
-        border-color: #38bdf8;
-        transform: translateY(-1px);
-    }
+                .partner-card-mini {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: rgba(30, 41, 59, 0.5);
+                    border: 1px solid #334155;
+                    border-radius: 6px;
+                    padding: 6px 12px;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                    min-width: 180px;
+                }
 
-    .partner-logo-github {
-        width: 20px; /* Logo piccolo */
-        height: 20px;
-        object-fit: contain;
-    }
+                .partner-card-mini:hover {
+                    background: #1e293b;
+                    border-color: #38bdf8;
+                    transform: translateY(-1px);
+                }
 
-    .partner-label {
-        font-weight: 600;
-        color: #e2e8f0;
-        font-size: 0.75rem; /* Testo più piccolo */
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
+                .partner-logo-github {
+                    width: 20px;
+                    height: 20px;
+                    object-fit: contain;
+                }
 
-    @media (max-width: 480px) {
-        .partner-card-mini { width: 100%; justify-content: center; }
-    }
-</style>
+                .partner-label {
+                    font-weight: 600;
+                    color: #e2e8f0;
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
 
-<div class="partners-wrapper">
-    <a href="https://www.bitget.com/register?registrationCode=EA3QK6UR" target="_blank" class="partner-card-mini">
-        <img src="bitget%20logo.png" alt="Bitget" class="partner-logo-github">
-        <span class="partner-label">REGISTER ON BITGET</span>
-    </a>
+                @media (max-width: 480px) {
+                    .partner-card-mini { width: 100%; justify-content: center; }
+                }
+            </style>
 
-    <a href="https://www.interactivebrokers.com/mkt/?src=nile" target="_blank" class="partner-card-mini">
-        <img src="xtb%20logo.png" alt="IBKR" class="partner-logo-github">
-        <span class="partner-label">REGISTER ON INTERACTIVE BROKERS</span>
-    </a>
-</div>
+            <div class="partners-wrapper">
+                <a href="https://www.bitget.com/register?registrationCode=EA3QK6UR" target="_blank" class="partner-card-mini">
+                    <img src="bitget%20logo.png" alt="Bitget" class="partner-logo-github">
+                    <span class="partner-label">REGISTER ON BITGET</span>
+                </a>
+
+                <a href="https://www.interactivebrokers.com/mkt/?src=nile" target="_blank" class="partner-card-mini">
+                    <img src="xtb%20logo.png" alt="IBKR" class="partner-logo-github">
+                    <span class="partner-label">REGISTER ON INTERACTIVE BROKERS</span>
+                </a>
+            </div>
+        </div>
     </div>
-    </a>
-</div>
+
     <footer class="footer-main">
         <div class="footer-links">
             <a href="contact.html">Contact</a>
@@ -422,6 +428,7 @@
 
         <div class="copyright">
             © 2026 NILEinvest™. All rights reserved.
+        </div>
     </footer>
 </body>
 </html>
