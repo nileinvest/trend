@@ -195,14 +195,6 @@
             <span>STATISTICS - INDUSTRY</span>
             <span class="info-btn" onclick="showExplanation(event, 'STATISTICS - INDUSTRY', 'Used to monitor where investor capital is flowing.')">info</span>
         </div>
-        <div class="stat-box bg-blue">
-            <span>INITIAL BALANCE:</span>
-            <input type="number" id="initialBalance" class="balance-input" value="500000" oninput="calculateBalance()">
-        </div>
-        <div class="stat-box bg-blue">
-            <span>BALANCE BACKTEST: <span id="balanceBacktestValue">0</span></span>
-            <span class="info-btn" onclick="showExplanation(event, 'BALANCE BACKTEST', 'Net profit on capital, if all trades were executed from 01/01/20 to 12/01/26.')">info</span>
-        </div>
     </div>
 
     <div id="recentFlips" class="recent-flips-section">
@@ -251,15 +243,9 @@
                             <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
                         </div>
                     </th>
-                    <th onclick="handleSort(6)">
-                        <div class="th-content">
-                            <div class="title-wrapper">BACKTEST 01/01/20-12/01/26 <span class="info-btn" onclick="showExplanation(event, 'BACKTEST', 'Result of the backtest for the specified period, using the following strategy: Open a LONG position upon the BUY signal. Close the LONG position upon the SELL signal and open a SHORT position with a 10% Take Profit. Close the SHORT position upon a new BUY signal (if not already closed at the 10% profit target) and open a new LONG position. In this test, The profit percentage is calculated on an initial capital of $500,000. Each position is opened with $10,000 (or a similar amount, depending on the cost of a single contract).')">info</span></div>
-                            <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()">
-                        </div>
-                    </th>
-                    <th onclick="handleSort(7)"><div class="th-content">MARKET <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(8)"><div class="th-content">SECTOR <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
-                    <th onclick="handleSort(9)"><div class="th-content">INDUSTRY <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(6)"><div class="th-content">MARKET <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(7)"><div class="th-content">SECTOR <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
+                    <th onclick="handleSort(8)"><div class="th-content">INDUSTRY <input type="text" class="filter-input desktop-filter" placeholder="🔍" onkeyup="filterTable()" onclick="event.stopPropagation()"></div></th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -313,20 +299,16 @@
                     <input type="text" class="filter-input mobile-filter" data-index="4" placeholder="Search Price..." onkeyup="syncMobileFilters()">
                 </div>
                 <div class="mobile-filter-item">
-                    <label>Backtest</label>
-                    <input type="text" class="filter-input mobile-filter" data-index="5" placeholder="Search Backtest..." onkeyup="syncMobileFilters()">
-                </div>
-                <div class="mobile-filter-item">
                     <label>Market</label>
-                    <input type="text" class="filter-input mobile-filter" data-index="6" placeholder="Search Market..." onkeyup="syncMobileFilters()">
+                    <input type="text" class="filter-input mobile-filter" data-index="5" placeholder="Search Market..." onkeyup="syncMobileFilters()">
                 </div>
                 <div class="mobile-filter-item">
                     <label>Sector</label>
-                    <input type="text" class="filter-input mobile-filter" data-index="7" placeholder="Search Sector..." onkeyup="syncMobileFilters()">
+                    <input type="text" class="filter-input mobile-filter" data-index="6" placeholder="Search Sector..." onkeyup="syncMobileFilters()">
                 </div>
                 <div class="mobile-filter-item">
                     <label>Industry</label>
-                    <input type="text" class="filter-input mobile-filter" data-index="8" placeholder="Search Industry..." onkeyup="syncMobileFilters()">
+                    <input type="text" class="filter-input mobile-filter" data-index="7" placeholder="Search Industry..." onkeyup="syncMobileFilters()">
                 </div>
             </div>
             <button class="close-btn" style="background:#38bdf8; border:none; padding:12px 0; width:100%; border-radius:5px; cursor:pointer; font-weight:bold;" onclick="toggleMobileFilters(false)">APPLY & CLOSE</button>
@@ -338,7 +320,6 @@
         let favorites = JSON.parse(localStorage.getItem('myWatchlist')) || [];
         let watchlistOnly = false;
         let sortDirection = {};
-        let totalBacktestSum = 0; // Somma globale delle percentuali backtest
 
         function toggleMobileFilters(show) {
             document.getElementById('mobileFilterModal').style.display = show ? 'flex' : 'none';
@@ -388,8 +369,7 @@
                 const tbody = document.getElementById('tableBody');
                 
                 let htmlBuffer = '';
-                let flipsBuffer = ''; // Buffer per i badge recenti
-                totalBacktestSum = 0; 
+                let flipsBuffer = ''; 
 
                 lines.forEach((line, index) => {
                     if (index === 0 || !line) return;
@@ -398,17 +378,12 @@
 
                     const isFav = favorites.includes(c[0]);
                     const trendW = c[4] || "";
-                    const timeSinceFlip = parseInt(c[6]); // Valore per il controllo 0-7
+                    const timeSinceFlip = parseInt(c[6]); 
                     const varWStr = c[15] || "0%";
                     const varWNum = parseFloat(varWStr.replace(',','.').replace('%',''));
                     
-                    const backtestStr = c[19] || "0%";
-                    const backtestNum = parseFloat(backtestStr.replace(',','.').replace('%',''));
-                    totalBacktestSum += isNaN(backtestNum) ? 0 : backtestNum;
-
                     const fullName = (c[27] || "No description available").replace(/'/g, "\\'");
 
-                    // LOGICA AGGIUNTA: Popolamento badge recenti (0-7 giorni)
                     if (!isNaN(timeSinceFlip) && timeSinceFlip >= 0 && timeSinceFlip <= 7) {
                         const flipColor = trendW.includes('BUY') ? '#4ade80' : '#f87171';
                         flipsBuffer += `
@@ -439,7 +414,6 @@
                             <td data-label="VAR %" class="${varWNum>0?'pos-var':varWNum<0?'neg-var':''}">${varWStr}</td>
                             <td data-label="TIME">${c[6]}</td>
                             <td data-label="PRICE">${c[14]}</td>
-                            <td data-label="BACKTEST" class="${backtestNum>0?'pos-var':backtestNum<0?'neg-var':''}">${backtestStr}</td>
                             <td data-label="MARKET">${c[1]}</td>
                             <td data-label="SECTOR">${c[17]}</td>
                             <td data-label="INDUSTRY">${c[18]}</td>
@@ -448,29 +422,12 @@
 
                 tbody.innerHTML = htmlBuffer;
                 
-                // Aggiornamento sezione badge recenti
                 const flipsContainer = document.getElementById('recentFlipsList');
                 flipsContainer.innerHTML = flipsBuffer || '<span style="color:#475569; font-size:0.8rem; padding-left:10px;">No recent flips found.</span>';
                 
                 restoreFilterState();
                 updateCounters();
-                calculateBalance(); 
             } catch (e) { console.error(e); }
-        }
-
-        function calculateBalance() {
-            const initialInput = document.getElementById('initialBalance');
-            const initial = parseFloat(initialInput.value);
-            const display = document.getElementById('balanceBacktestValue');
-            
-            localStorage.setItem('nile_initialBalance', initialInput.value);
-
-            if (!isNaN(initial)) {
-                const result = initial * (totalBacktestSum / 100);
-                display.innerText = result.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            } else {
-                display.innerText = "0";
-            }
         }
 
         function parseCSVLine(l, s) {
@@ -518,9 +475,6 @@
         }
 
         function restoreFilterState() {
-            const savedBalance = localStorage.getItem('nile_initialBalance');
-            if (savedBalance) { document.getElementById('initialBalance').value = savedBalance; }
-
             const savedWatchlist = localStorage.getItem('nile_watchlistOnly') === 'true';
             if (savedWatchlist) {
                 watchlistOnly = true;
