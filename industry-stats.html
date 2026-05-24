@@ -91,23 +91,23 @@
     <div class="macro-container" id="macroContainer" style="display: none;">
         <div class="macro-box">
             <div class="macro-label">Yield Curve (10Y-2Y)</div>
-            <div class="macro-value" id="macro-yield">-</div>
+            <div class="macro-value" id="macro-yield">Caricamento...</div>
         </div>
         <div class="macro-box">
             <div class="macro-label">Fed Rates</div>
-            <div class="macro-value" id="macro-rates">-</div>
+            <div class="macro-value" id="macro-rates">Caricamento...</div>
         </div>
         <div class="macro-box">
             <div class="macro-label">Unemployment</div>
-            <div class="macro-value" id="macro-unemp">-</div>
+            <div class="macro-value" id="macro-unemp">Caricamento...</div>
         </div>
         <div class="macro-box">
             <div class="macro-label">CPI Inflation</div>
-            <div class="macro-value" id="macro-infl">-</div>
+            <div class="macro-value" id="macro-infl">Caricamento...</div>
         </div>
         <div class="macro-box phase-box">
             <div class="macro-label">Current Cycle Phase</div>
-            <div class="macro-value phase" id="macro-phase">-</div>
+            <div class="macro-value phase" id="macro-phase">Caricamento...</div>
         </div>
     </div>
 
@@ -129,6 +129,7 @@
 
         async function loadMacroStats() {
             try {
+                document.getElementById('macroContainer').style.display = 'flex'; // Mostra i box subito
                 const res = await fetch(macroCsvUrl + '&nocache=' + Date.now());
                 const text = await res.text();
                 const sep = text.includes(';') ? ';' : ',';
@@ -153,18 +154,18 @@
                     let inflVal = macroData[3] || '-';
                     let phaseVal = macroData[4] || '-';
 
-                    // Funzione robusta per formattare la stringa (come nel codice della Dashboard originale)
+                    // Funzione robusta per formattare la stringa
                     const formatNum = (val) => {
                         if (!val || val === '-') return '-';
                         let clean = val.replace('%', '').trim();
-                        let isItalian = clean.includes(','); // Verifica se usa la virgola
-                        let parsed = parseFloat(clean.replace(',', '.')); // Trasforma in numero per JS
+                        let isItalian = clean.includes(','); 
+                        let parsed = parseFloat(clean.replace(',', '.')); 
                         
                         if (!isNaN(parsed)) {
-                            let rounded = parsed.toFixed(2); // Fissa a 2 decimali (es. 2.311289 diviene 2.31)
+                            let rounded = parsed.toFixed(2); 
                             return isItalian ? rounded.replace('.', ',') : rounded;
                         }
-                        return val; // Se non è un numero, restituisci il testo puro (fallback)
+                        return val; 
                     };
 
                     const addPct = (val) => (val !== '-' && !val.includes('%')) ? val + '%' : val;
@@ -174,10 +175,11 @@
                     document.getElementById('macro-unemp').innerText = addPct(formatNum(unempVal));
                     document.getElementById('macro-infl').innerText = addPct(formatNum(inflVal));
                     document.getElementById('macro-phase').innerText = phaseVal;
-                    
-                    document.getElementById('macroContainer').style.display = 'flex';
                 }
-            } catch (e) { console.error("Errore caricamento dati macro:", e); }
+            } catch (e) { 
+                console.error("Errore caricamento dati macro:", e);
+                document.getElementById('macro-phase').innerText = "Errore di connessione";
+            }
         }
 
         async function loadIndustryStats() {
@@ -197,14 +199,12 @@
                     const marketVal = (c[1] || "").toUpperCase();
                     const industryVal = (c[18] || "").toUpperCase();
 
-                    // FILTRO ESCLUSIONE
                     const excluded = ['ASIA', 'CURRENCY RATES', 'EUROPE', 'USA', 'URANIUM'];
                     if (excluded.includes(marketVal) || excluded.includes(industryVal)) return;
 
                     const industry = c[18] || "Other / Unknown";
                     const trendW = (c[4] || "").toUpperCase();
 
-                    // Divisione per tipologia di mercato
                     const targetObj = marketVal.includes("CRYPTOCURRENCIES") ? cryptos : stocks;
 
                     if (!targetObj[industry]) {
@@ -263,11 +263,13 @@
             r.push(cur.trim()); return r;
         }
 
-        window.addEventListener('load', () => {
-            window.$memberstackDom.getCurrentMember().then(({data}) => {
+        // --- RISOLTO IL PROBLEMA DELLA RACE CONDITION ---
+        window.addEventListener('pageshow', (event) => {
+            window.$memberstackDom.getCurrentMember().then(async ({data}) => {
                 if (data) {
-                    loadMacroStats();
-                    loadIndustryStats();
+                    // Mettiamo "await" così Google non viene sovraccaricato da doppie richieste
+                    await loadMacroStats();
+                    await loadIndustryStats();
                 } else {
                     window.location.href = "index.html";
                 }
