@@ -127,9 +127,12 @@
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
         const macroCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1139976531&single=true&output=csv';
 
+        // Funzione per forzare una pausa (delay) nel codice
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
         async function loadMacroStats() {
             try {
-                document.getElementById('macroContainer').style.display = 'flex'; // Mostra i box subito
+                document.getElementById('macroContainer').style.display = 'flex';
                 const res = await fetch(macroCsvUrl + '&nocache=' + Date.now());
                 const text = await res.text();
                 const sep = text.includes(';') ? ';' : ',';
@@ -137,7 +140,6 @@
                 
                 let macroData = null;
                 
-                // Cerca la prima riga utile contenente i dati, ignorando le righe vuote o l'intestazione
                 for (let i = 1; i < lines.length; i++) {
                     if (!lines[i]) continue;
                     const c = parseCSVLine(lines[i], sep);
@@ -154,7 +156,6 @@
                     let inflVal = macroData[3] || '-';
                     let phaseVal = macroData[4] || '-';
 
-                    // Funzione robusta per formattare la stringa
                     const formatNum = (val) => {
                         if (!val || val === '-') return '-';
                         let clean = val.replace('%', '').trim();
@@ -263,13 +264,22 @@
             r.push(cur.trim()); return r;
         }
 
-        // --- RISOLTO IL PROBLEMA DELLA RACE CONDITION ---
+        // Sistema di avvio controllato e distanziato
+        async function runSequentialLoad() {
+            // 1. Carica i dati macro
+            await loadMacroStats();
+            
+            // 2. Aspetta 800 millisecondi esatti prima di fare qualsiasi altra cosa
+            await sleep(800);
+            
+            // 3. Carica la tabella pesante
+            await loadIndustryStats();
+        }
+
         window.addEventListener('pageshow', (event) => {
-            window.$memberstackDom.getCurrentMember().then(async ({data}) => {
+            window.$memberstackDom.getCurrentMember().then(({data}) => {
                 if (data) {
-                    // Mettiamo "await" così Google non viene sovraccaricato da doppie richieste
-                    await loadMacroStats();
-                    await loadIndustryStats();
+                    runSequentialLoad();
                 } else {
                     window.location.href = "index.html";
                 }
