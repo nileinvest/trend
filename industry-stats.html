@@ -36,7 +36,7 @@
         .progress-buy { background: #166534; height: 100%; }
         .progress-sell { background: #7f1d1d; height: 100%; }
 
-        /* --- NUOVI STILI PER LA SEZIONE MACRO --- */
+        /* --- STILI SEZIONE MACRO --- */
         .macro-container {
             display: flex;
             gap: 15px;
@@ -76,7 +76,6 @@
             color: #38bdf8;
             font-size: 1.2rem;
         }
-        /* -------------------------------------- */
         
         @media (max-width: 768px) { .brand-title { display: none; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
@@ -111,6 +110,7 @@
             <div class="macro-value phase" id="macro-phase">-</div>
         </div>
     </div>
+
     <div id="loading" style="text-align: center; margin-top: 50px;">Calculating industry trends...</div>
 
     <div id="stocksSection" style="display: none;">
@@ -125,8 +125,6 @@
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
-        
-        // Link al CSV dei dati Macro inserito
         const macroCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1139976531&single=true&output=csv';
 
         async function loadMacroStats() {
@@ -136,15 +134,46 @@
                 const sep = text.includes(';') ? ';' : ',';
                 const lines = text.split(/\r?\n/);
                 
-                if (lines.length > 1) {
-                    const c = parseCSVLine(lines[1], sep);
-                    
-                    // Formattazione dati: aggiungo % dove serve e formatto a 2 decimali
-                    document.getElementById('macro-yield').innerText = c[0] ? parseFloat(c[0].replace(',','.')).toFixed(2) : '-';
-                    document.getElementById('macro-rates').innerText = c[1] ? parseFloat(c[1].replace(',','.')).toFixed(2) + '%' : '-';
-                    document.getElementById('macro-unemp').innerText = c[2] ? parseFloat(c[2].replace(',','.')).toFixed(1) + '%' : '-';
-                    document.getElementById('macro-infl').innerText = c[3] ? parseFloat(c[3].replace(',','.')).toFixed(2) + '%' : '-';
-                    document.getElementById('macro-phase').innerText = c[4] || '-';
+                let macroData = null;
+                
+                // Cerca la prima riga utile contenente i dati, ignorando le righe vuote o l'intestazione
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i]) continue;
+                    const c = parseCSVLine(lines[i], sep);
+                    if (c.length >= 4 && c[0]) {
+                        macroData = c;
+                        break;
+                    }
+                }
+
+                if (macroData) {
+                    let yieldVal = macroData[0] || '-';
+                    let ratesVal = macroData[1] || '-';
+                    let unempVal = macroData[2] || '-';
+                    let inflVal = macroData[3] || '-';
+                    let phaseVal = macroData[4] || '-';
+
+                    // Funzione robusta per formattare la stringa (come nel codice della Dashboard originale)
+                    const formatNum = (val) => {
+                        if (!val || val === '-') return '-';
+                        let clean = val.replace('%', '').trim();
+                        let isItalian = clean.includes(','); // Verifica se usa la virgola
+                        let parsed = parseFloat(clean.replace(',', '.')); // Trasforma in numero per JS
+                        
+                        if (!isNaN(parsed)) {
+                            let rounded = parsed.toFixed(2); // Fissa a 2 decimali (es. 2.311289 diviene 2.31)
+                            return isItalian ? rounded.replace('.', ',') : rounded;
+                        }
+                        return val; // Se non è un numero, restituisci il testo puro (fallback)
+                    };
+
+                    const addPct = (val) => (val !== '-' && !val.includes('%')) ? val + '%' : val;
+
+                    document.getElementById('macro-yield').innerText = formatNum(yieldVal);
+                    document.getElementById('macro-rates').innerText = addPct(formatNum(ratesVal));
+                    document.getElementById('macro-unemp').innerText = addPct(formatNum(unempVal));
+                    document.getElementById('macro-infl').innerText = addPct(formatNum(inflVal));
+                    document.getElementById('macro-phase').innerText = phaseVal;
                     
                     document.getElementById('macroContainer').style.display = 'flex';
                 }
