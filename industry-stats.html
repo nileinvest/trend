@@ -35,6 +35,48 @@
         .progress-bar-bg { background: #0f172a; height: 10px; border-radius: 5px; overflow: hidden; display: flex; margin-top: 5px; }
         .progress-buy { background: #166534; height: 100%; }
         .progress-sell { background: #7f1d1d; height: 100%; }
+
+        /* --- NUOVI STILI PER LA SEZIONE MACRO --- */
+        .macro-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+        .macro-box {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            justify-content: center;
+        }
+        .macro-box.phase-box {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid #38bdf8;
+        }
+        .macro-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .macro-value {
+            font-size: 1.1rem;
+            color: #f8fafc;
+            font-weight: 900;
+        }
+        .macro-value.phase {
+            color: #38bdf8;
+            font-size: 1.2rem;
+        }
+        /* -------------------------------------- */
         
         @media (max-width: 768px) { .brand-title { display: none; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
@@ -47,6 +89,28 @@
         <div style="width: 150px;"></div> 
     </div>
 
+    <div class="macro-container" id="macroContainer" style="display: none;">
+        <div class="macro-box">
+            <div class="macro-label">Yield Curve (10Y-2Y)</div>
+            <div class="macro-value" id="macro-yield">-</div>
+        </div>
+        <div class="macro-box">
+            <div class="macro-label">Fed Rates</div>
+            <div class="macro-value" id="macro-rates">-</div>
+        </div>
+        <div class="macro-box">
+            <div class="macro-label">Unemployment</div>
+            <div class="macro-value" id="macro-unemp">-</div>
+        </div>
+        <div class="macro-box">
+            <div class="macro-label">CPI Inflation</div>
+            <div class="macro-value" id="macro-infl">-</div>
+        </div>
+        <div class="macro-box phase-box">
+            <div class="macro-label">Current Cycle Phase</div>
+            <div class="macro-value phase" id="macro-phase">-</div>
+        </div>
+    </div>
     <div id="loading" style="text-align: center; margin-top: 50px;">Calculating industry trends...</div>
 
     <div id="stocksSection" style="display: none;">
@@ -61,6 +125,31 @@
 
     <script>
         const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1410987574&single=true&output=csv';
+        
+        // Link al CSV dei dati Macro inserito
+        const macroCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQdzNpQjqwdqK5ZO16Kd8hlNNtmm31gxOy1AAb49CDXqxMwEOmUpowc9H4rHWPbb9rd874zmOtcDTUo/pub?gid=1139976531&single=true&output=csv';
+
+        async function loadMacroStats() {
+            try {
+                const res = await fetch(macroCsvUrl + '&nocache=' + Date.now());
+                const text = await res.text();
+                const sep = text.includes(';') ? ';' : ',';
+                const lines = text.split(/\r?\n/);
+                
+                if (lines.length > 1) {
+                    const c = parseCSVLine(lines[1], sep);
+                    
+                    // Formattazione dati: aggiungo % dove serve e formatto a 2 decimali
+                    document.getElementById('macro-yield').innerText = c[0] ? parseFloat(c[0].replace(',','.')).toFixed(2) : '-';
+                    document.getElementById('macro-rates').innerText = c[1] ? parseFloat(c[1].replace(',','.')).toFixed(2) + '%' : '-';
+                    document.getElementById('macro-unemp').innerText = c[2] ? parseFloat(c[2].replace(',','.')).toFixed(1) + '%' : '-';
+                    document.getElementById('macro-infl').innerText = c[3] ? parseFloat(c[3].replace(',','.')).toFixed(2) + '%' : '-';
+                    document.getElementById('macro-phase').innerText = c[4] || '-';
+                    
+                    document.getElementById('macroContainer').style.display = 'flex';
+                }
+            } catch (e) { console.error("Errore caricamento dati macro:", e); }
+        }
 
         async function loadIndustryStats() {
             try {
@@ -147,7 +236,12 @@
 
         window.addEventListener('load', () => {
             window.$memberstackDom.getCurrentMember().then(({data}) => {
-                if (data) loadIndustryStats(); else window.location.href = "index.html";
+                if (data) {
+                    loadMacroStats();
+                    loadIndustryStats();
+                } else {
+                    window.location.href = "index.html";
+                }
             });
         });
     </script>
